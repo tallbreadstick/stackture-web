@@ -12,7 +12,7 @@ function Dashboard() {
         <div id="dashboard-page" class="page">
             <Navigation />
             <div class="page-content">
-
+                
             </div>
         </div>
     );

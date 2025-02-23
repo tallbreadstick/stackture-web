@@ -16,10 +16,10 @@
     padding: 8px 15px 8px 15px;
     box-sizing: border-box;
     display: flex;
-    gap: 20px;
+    gap: 40px;
     background: linear-gradient(to bottom, teal, #006262, #003939);
     a {
-        font-family: 'Varela Round';
+        font-family: 'Sigmar';
         font-size: 1.2rem;
         color: white;
         text-decoration: none;
@@ -46,7 +46,8 @@
                 align-items: center;
                 h2 {
                     font-family: 'Lilita One';
-                    color: #45c4c4;
+                    font-size: 2rem;
+                    color: #241ed6;
                 }
             }
         }
@@ -100,6 +101,79 @@
                     }
                 }
             }
+            .auth-box {
+                position: relative;
+                display: flex;
+                width: 50%;
+                gap: 10px;
+                flex-direction: column;
+                align-items: center;
+                padding: 15px;
+                box-sizing: border-box;
+                background-color: #99999977;
+                border-radius: 18px;
+                animation: fadeIn 0.5s ease-in;
+                .auth-exit {
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    img {
+                        user-select: none;
+                        pointer-events: none;
+                        filter: invert(1);
+                    }
+                }
+                h2 {
+                    font-family: 'Lilita One';
+                    font-size: 2.5rem;
+                    color: white;
+                }
+                input {
+                    width: 80%;
+                    padding: 6px;
+                    box-sizing: border-box;
+                    font-family: 'Varela Round';
+                    font-size: 1rem;
+                    color: black;
+                    outline: 0;
+                    border: 0;
+                }
+                button {
+                    outline: 0;
+                    border: 0;
+                    margin: 20px 0 20px 0;
+                    padding: 8px 16px 8px 16px;
+                    box-sizing: border-box;
+                    border-radius: 12px;
+                    background-color: #002525;
+                    font-family: 'Varela Round';
+                    font-size: 1rem;
+                    color: white;
+                    box-shadow: 0 2px 4px #333;
+                    transition: background-color 0.3s ease;
+                }
+                button:hover {
+                    background-color: #005151;
+                }
+                button:active {
+                    background-color: #00b1b1;
+                }
+            }
         }
+    }
+}
+
+#dashboard-page .page-content {
+    background-color: #228989;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

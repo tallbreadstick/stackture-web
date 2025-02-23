@@ -10,13 +10,14 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Workspace = lazy(() => import("./pages/Workspace"));
 
 function App() {
+
     return (
         <div id="app">
             <Router>
                 <Route path="/" component={Home} />
                 <Route path="/about" component={About} />
-                {/* <Route path="/dashboard" component={Dashboard} /> */}
-                {/* <Router path="/workspace" component={Workspace} /> */}
+                <Route path="/dashboard" component={Dashboard} />
+                <Router path="/workspace" component={Workspace} />
             </Router>
         </div>
     );
