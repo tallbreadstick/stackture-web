@@ -3,6 +3,7 @@ import Navigation from "../components/Navigation";
 import CloseButton from "./../assets/close.svg";
 import "./pages.css";
 import { useNavigate } from "@solidjs/router";
+import toast from "solid-toast";
 
 function Home() {
 
@@ -24,6 +25,7 @@ function Home() {
 
     function navigateToDashboard() {
         navigate("/dashboard");
+        toast.success("Successfully logged in");
     }
 
     onMount(() => {

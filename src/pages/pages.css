@@ -10,6 +10,36 @@
     }
 }
 
+.context-menu {
+    position: absolute;
+    background-color: #1e80d6;
+    padding: 12px 2px 12px 2px;
+    box-sizing: border-box;
+    box-shadow: 2px 2px 8px #05042c;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    div {
+        display: flex;
+        align-items: center;
+        padding: 2px 6px 2px 6px;
+        box-sizing: border-box;
+    }
+    div:hover {
+        background-color: #5498d3;
+    }
+    img {
+        user-select: none;
+        pointer-events: none;
+    }
+    label {
+        padding: 3px 6px 3px 6px;
+        box-sizing: border-box;
+        font-family: 'Kanit';
+        font-size: 0.8rem;
+    }
+}
+
 .navigation {
     width: 100%;
     height: fit-content;
@@ -199,12 +229,16 @@
         flex-direction: column;
         transition: background-color 0.3s ease;
         h1 {
+            pointer-events: none;
+            user-select: none;
             font-family: 'Lilita One';
             font-size: 1.5rem;
             color: white;
             margin: 0;
         }
         p {
+            pointer-events: none;
+            user-select: none;
             font-family: 'Kanit';
             font-size: 1rem;
             color: white;

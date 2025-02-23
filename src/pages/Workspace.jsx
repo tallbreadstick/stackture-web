@@ -9,7 +9,15 @@ function Workspace() {
 
     return (
         <div id="workspace-page" class="page">
+            <div class="ws-toolbar">
 
+            </div>
+            <div class="ws-canvas">
+
+            </div>
+            <div class="ws-chat">
+
+            </div>
         </div>
     );
 }

@@ -1,11 +1,12 @@
 import { Route, Router } from "@solidjs/router";
 import { createSignal, lazy } from "solid-js";
-import Home from "./pages/Home";
-import About from "./pages/About";
 import "./index.css";
+import { Toaster } from "solid-toast";
 
 export const [user, setUser] = createSignal(null);
 
+const Home = lazy(() => import("./pages/Home"));
+const About  = lazy(() => import("./pages/About"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Workspace = lazy(() => import("./pages/Workspace"));
 
@@ -19,6 +20,7 @@ function App() {
                 <Route path="/dashboard" component={Dashboard} />
                 <Router path="/workspace" component={Workspace} />
             </Router>
+            <Toaster />
         </div>
     );
 }
