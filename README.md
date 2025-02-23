@@ -1,36 +1,19 @@
-## Usage
+# Stackture - Structure Your Stack (Web)
 
-Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
+An application that guides learners through a precise problem-focused strategy.
 
-This is the reason you see a `pnpm-lock.yaml`. That being said, any package manager will work. This file can be safely be removed once you clone a template.
+**Project Goal/Purpose:** 
 
-```bash
-$ npm install # or pnpm install or yarn install
-```
+Stackture targets SDG 4, "Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all.”
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
+Humans are the most important resources worth cultivating sustainably. Beyond ecosystems, economies, and industries, developing human minds and skills for future generations will be the most beneficial investment we can make in the present. To assist the youth of this generation undergoing education, Stackture aims to be a study tool that offers precise guidance in solving problems, overcoming learning gaps, and reaching goals.
 
-## Available Scripts
+**Tech Stack**<br>
+[![My Skills](https://skillicons.dev/icons?i=js,solidjs&theme=dark)](https://skillicons.dev)
 
-In the project directory, you can run:
+This is a part of **Stackture**.<br>
+For more info click on the main repo link below.<br>
+**Main repo link:**<br>
+https://github.com/DymNomZ/Stackture
 
-### `npm run dev` or `npm start`
-
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br>
-
-### `npm run build`
-
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-## Deployment
-
-You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
-
-## This project was created with the [Solid CLI](https://solid-cli.netlify.app)
+**Property of 5stack as part of the University of the Philippines' KOMSAI WEEK 2025 HACKATHON**
