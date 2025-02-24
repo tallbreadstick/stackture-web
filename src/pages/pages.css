@@ -229,16 +229,12 @@
         flex-direction: column;
         transition: background-color 0.3s ease;
         h1 {
-            pointer-events: none;
-            user-select: none;
             font-family: 'Lilita One';
             font-size: 1.5rem;
             color: white;
             margin: 0;
         }
         p {
-            pointer-events: none;
-            user-select: none;
             font-family: 'Kanit';
             font-size: 1rem;
             color: white;

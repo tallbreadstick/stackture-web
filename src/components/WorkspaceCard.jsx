@@ -5,7 +5,6 @@ import LinkIcon from "./../assets/link.svg";
 function WorkspaceCard(props) {
 
     function spawnCardContext(e) {
-        console.log("spawning context...");
         spawnContext(e,
             <>
                 <div>
