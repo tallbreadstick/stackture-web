@@ -161,6 +161,7 @@
                 input {
                     width: 80%;
                     padding: 6px;
+                    margin-bottom: 4px;
                     box-sizing: border-box;
                     font-family: 'Varela Round';
                     font-size: 1rem;
@@ -188,6 +189,10 @@
                 button:active {
                     background-color: #00b1b1;
                 }
+                label.error{
+                    width: 80%;
+                    margin-bottom: 8px;
+                }
             }
         }
     }
@@ -207,6 +212,32 @@
         font-family: 'Lilita One';
         font-size: 1.5rem;
         color: white;
+    }
+}
+
+
+#about-page .page-content {
+    background-color: #05042c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    h1 {
+        font-family: 'Lilita One';
+        font-size: 3rem;
+        color: white;
+    }
+    h3 {
+        font-family: 'Lilita One';
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    p {
+        font-family: 'Kanit';
+        font-size: 1rem;
+        color: white;
+        text-align: center;
+        margin: 0;
     }
 }
 
@@ -274,4 +305,12 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.error {
+    color: #ff0000;
+    font-size: 0.8rem;
+    margin-top: 4px;
+    text-align: left;
+    font-family: 'Varela Round';
 }

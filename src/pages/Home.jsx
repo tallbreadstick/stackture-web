@@ -4,12 +4,19 @@ import CloseButton from "./../assets/close.svg";
 import "./pages.css";
 import { useNavigate } from "@solidjs/router";
 import toast from "solid-toast";
+import { validateLogin, validateSignup } from "../scripts/auth";
 
 function Home() {
 
     const navigate = useNavigate();
 
     const [pageState, setPageState] = createSignal(null);
+
+    const [username, setUsername] = createSignal('');
+    const [email, setEmail] = createSignal('');
+    const [password, setPassword] = createSignal('');
+    const [confirmPassword, setConfirmPassword] = createSignal('');
+    const [errors, setErrors] = createSignal({});
 
     function openLogin() {
         setPageState("login");
@@ -21,6 +28,34 @@ function Home() {
 
     function closeAuth() {
         setPageState(null);
+        setUsername('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+        setErrors({});
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        const loginValidation = validateLogin(username(), password());
+        
+        if (loginValidation.isValid) {
+            navigateToDashboard();
+        } else {
+            setErrors(loginValidation.errors);
+        }
+    }
+
+    function handleSignup(e) {
+        e.preventDefault();
+        const signupValidation = validateSignup(username(), email(), password(), confirmPassword());
+        
+        if (signupValidation.isValid) {
+            toast.success("Successfully registered!");
+            closeAuth();
+        } else {
+            setErrors(signupValidation.errors);
+        }
     }
 
     function navigateToDashboard() {
@@ -61,10 +96,21 @@ function Home() {
                                     <img src={CloseButton} width="25px" />
                                 </div>
                                 <h2>Sign In</h2>
-                                <input type="text" placeholder="Username" />
-                                <input type="password" placeholder="Password" />
-                                <label></label>
-                                <button onClick={navigateToDashboard}>Submit</button>
+                                <input 
+                                    type="text" 
+                                    placeholder="Username"
+                                    value={username()}
+                                    onInput={(e) => setUsername(e.target.value)} 
+                                />
+                                {errors().username && <label class="error">{errors().username}</label>}
+                                <input 
+                                    type="password" 
+                                    placeholder="Password"
+                                    value={password()}
+                                    onInput={(e) => setPassword(e.target.value)}
+                                />
+                                {errors().password && <label class="error">{errors().password}</label>}
+                                <button onClick={handleLogin}>Submit</button>
                             </div>
                         </Match>
                         <Match when={pageState() === "register"}>
@@ -73,12 +119,35 @@ function Home() {
                                     <img src={CloseButton} width="25px" />
                                 </div>
                                 <h2>Sign Up</h2>
-                                <input type="text" placeholder="Username" />
-                                <input type="text" placeholder="Email" />
-                                <input type="password" placeholder="Password" />
-                                <input type="password" placeholder="Confirm Password" />
-                                <label></label>
-                                <button>Submit</button>
+                                <input 
+                                    type="text" 
+                                    placeholder="Username"
+                                    value={username()}
+                                    onInput={(e) => setUsername(e.target.value)}
+                                />
+                                {errors().username && <label class="error">{errors().username}</label>}
+                                <input 
+                                    type="text" 
+                                    placeholder="Email"
+                                    value={email()}
+                                    onInput={(e) => setEmail(e.target.value)}
+                                />
+                                {errors().email && <label class="error">{errors().email}</label>}
+                                <input 
+                                    type="password" 
+                                    placeholder="Password"
+                                    value={password()}
+                                    onInput={(e) => setPassword(e.target.value)}
+                                />
+                                {errors().password && <label class="error">{errors().password}</label>}
+                                <input 
+                                    type="password" 
+                                    placeholder="Confirm Password"
+                                    value={confirmPassword()}
+                                    onInput={(e) => setConfirmPassword(e.target.value)}
+                                />
+                                {errors().confirmPassword && <label class="error">{errors().confirmPassword}</label>}
+                                <button onClick={handleSignup}>Submit</button>
                             </div>
                         </Match>
                     </Switch>

@@ -9,10 +9,12 @@ function About() {
     });
 
     return (
-        <div id="about-page">
+        <div id="about-page" class="page">
             <Navigation />
             <div class="page-content">
-
+                <h1>About Stackture</h1>
+                <p>Stackture is a platform that allows you to structure your learning by breaking down problems into smaller digestible parts.</p>
+                <p>It is built with Solid.js and Solid Auth.</p>
             </div>
         </div>
     );
