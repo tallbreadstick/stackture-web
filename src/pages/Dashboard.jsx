@@ -3,8 +3,14 @@ import Navigation from "../components/Navigation";
 import "./pages.css";
 import WorkspaceCard from "../components/WorkspaceCard";
 import AddIcon from "./../assets/add.svg";
+import { useNavigate } from "@solidjs/router";
 
 function Dashboard() {
+    const navigate = useNavigate();
+
+    function navigateToWorkspace() {
+        navigate("/workspace");
+    }
 
     onMount(() => {
         document.title = "Stackture - Dashboard";
@@ -17,7 +23,7 @@ function Dashboard() {
                 <h1>Workspaces</h1>
                 <h3>These are isolated spaces where you can have study sessions.</h3>
                 <div id="workspaces">
-                    <div class="workspace-card">
+                    <div class="workspace-card" onClick={navigateToWorkspace} style="cursor: pointer;">
                         <div class="new-card">
                             <img src={AddIcon} width="30px" />
                             <label>New Workspace</label>
