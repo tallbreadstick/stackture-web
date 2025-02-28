@@ -1,8 +1,14 @@
+import { useNavigate } from "@solidjs/router";
 import { spawnContext } from "../menus/ContextMenu";
 import TrashIcon from "./../assets/trash.svg";
 import LinkIcon from "./../assets/link.svg";
 
 function WorkspaceCard(props) {
+    const navigate = useNavigate();
+
+    function navigateToWorkspace() {
+        navigate("/workspace");
+    }
 
     function spawnCardContext(e) {
         spawnContext(e,
@@ -20,7 +26,12 @@ function WorkspaceCard(props) {
     }
 
     return (
-        <div onContextMenu={spawnCardContext} class="workspace-card">
+        <div 
+            onClick={navigateToWorkspace} 
+            onContextMenu={spawnCardContext} 
+            class="workspace-card"
+            style="cursor: pointer">
+
             <h1>{props.title}</h1>
             <p>{props.description}</p>
         </div>

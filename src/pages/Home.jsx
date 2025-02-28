@@ -1,18 +1,18 @@
-import { createSignal, onMount, Switch } from "solid-js";
 import Navigation from "../components/Navigation";
 import CloseButton from "./../assets/close.svg";
-import "./pages.css";
-import { useNavigate } from "@solidjs/router";
 import toast from "solid-toast";
-import { validateLogin, validateSignup } from "../scripts/auth";
+
+import { createSignal, onMount, Switch } from "solid-js";
+import { useNavigate } from "@solidjs/router";
+import { handleLogin, handleSignup } from "../scripts/auth";
 import { login, setUser } from "../App";
+import "./pages.css";
 
 function Home() {
 
     const navigate = useNavigate();
 
     const [pageState, setPageState] = createSignal(null);
-
     const [username, setUsername] = createSignal('');
     const [email, setEmail] = createSignal('');
     const [password, setPassword] = createSignal('');
@@ -36,100 +36,22 @@ function Home() {
         setErrors({});
     }
 
-    function handleLogin(e) {
+    function onLoginSubmit(e) {
         e.preventDefault();
-        const loginValidation = validateLogin(username(), password());
-        
-        if (loginValidation.isValid) {
-            fetch("http://stackture.eloquenceprojects.org/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    username: username(),
-                    password: password()
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    switch(data.error) {
-                        case "InvalidCredentials":
-                            setErrors({...errors(), password: "Invalid username or password"});
-                            break;
-                        case "InvalidRequest":
-                            toast.error("Invalid request format");
-                            break;
-                        case "TokenCreationFailed":
-                        case "DatabaseOperationFailed":
-                        default:
-                            toast.error("Login failed. Please try again later.");
-                    }
-                } else if (data.token) {
-                    localStorage.setItem("authToken", data.token);
-                    login(username());
-                    navigate("/dashboard");
-                    toast.success("Successfully logged in");
-                }
-            })
-            .catch(error => {
-                console.error("Login error:", error);
-                toast.error("Login failed. Please check your connection.");
-            });
-        } else {
-            setErrors(loginValidation.errors);
-        }
+        handleLogin(username(), password(), setErrors, navigate, toast);
     }
-
-    function handleSignup(e) {
+    
+    function onSignupSubmit(e) {
         e.preventDefault();
-        const signupValidation = validateSignup(username(), email(), password(), confirmPassword());
-        
-        if (signupValidation.isValid) {
-            fetch("http://stackture.eloquenceprojects.org/auth/register", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: username(),
-                    email: email(),
-                    password: password()
-                })
-            })
-            .then(async response => {
-                if (response.status === 200) {
-                    return response.json();
-                } else {
-                    const data = await response.json();
-                    throw new Error(data.error || `Error: ${response.status}`);
-                }
-            })
-            .then(data => {
-                if (data.token) {
-                    localStorage.setItem("authToken", data.token);
-                    toast.success("Successfully registered!");
-                    login(username());
-                    closeAuth();
-                    navigate("/dashboard");
-                } else {
-                    toast.error("Token failed to generate. Please try again.");
-                }
-            })
-            .catch(error => {
-                console.error("Registration error:", error.message);
-                if (error.message === "UserAlreadyExists") {
-                    setErrors({...errors(), username: "Username already exists"});
-                } else if (error.message === "EmailAlreadyUsed") {
-                    setErrors({...errors(), email: "Email already in use"});
-                } else {
-                    toast.error(`Registration failed: ${error.message}`);
-                }
-            });
-        } else {
-            setErrors(signupValidation.errors);
-        }
+        handleSignup(
+            username(), 
+            email(), 
+            password(), 
+            setErrors, 
+            navigate, 
+            toast, 
+            closeAuth
+        );
     }
 
     onMount(() => {
@@ -179,7 +101,7 @@ function Home() {
                                     onInput={(e) => setPassword(e.target.value)}
                                 />
                                 {errors().password && <label class="error">{errors().password}</label>}
-                                <button onClick={handleLogin}>Submit</button>
+                                <button onClick={onLoginSubmit}>Submit</button>
                             </div>
                         </Match>
                         <Match when={pageState() === "register"}>
@@ -216,7 +138,7 @@ function Home() {
                                     onInput={(e) => setConfirmPassword(e.target.value)}
                                 />
                                 {errors().confirmPassword && <label class="error">{errors().confirmPassword}</label>}
-                                <button onClick={handleSignup}>Submit</button>
+                                <button onClick={onSignupSubmit}>Submit</button>
                             </div>
                         </Match>
                     </Switch>
