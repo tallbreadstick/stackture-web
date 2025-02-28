@@ -23,7 +23,7 @@ export const validateSignup = (username, email, password, confirmPassword) => {
     if (!password) {
         errors.password = 'Password is required';
     } else if (password.length < 6) {
-        errors.password = 'Password must be at least 6 characters long';
+        errors.password = 'Password must be at least 6 characters long with 1 number, and 1 special character';
     } else if (!passwordRegex.test(password)) {
         errors.password = 'Password must contain at least 1 number and 1 special character';
     }

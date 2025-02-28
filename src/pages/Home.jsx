@@ -40,7 +40,41 @@ function Home() {
         const loginValidation = validateLogin(username(), password());
         
         if (loginValidation.isValid) {
-            navigateToDashboard();
+            fetch("http://stackture.eloquenceprojects.org/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: username(),
+                    password: password()
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    switch(data.error) {
+                        case "InvalidCredentials":
+                            setErrors({...errors(), password: "Invalid username or password"});
+                            break;
+                        case "InvalidRequest":
+                            toast.error("Invalid request format");
+                            break;
+                        case "TokenCreationFailed":
+                        case "DatabaseOperationFailed":
+                        default:
+                            toast.error("Login failed. Please try again later.");
+                    }
+                } else if (data.token) {
+                    localStorage.setItem("authToken", data.token);
+                    navigate("/dashboard");
+                    toast.success("Successfully logged in");
+                }
+            })
+            .catch(error => {
+                console.error("Login error:", error);
+                toast.error("Login failed. Please check your connection.");
+            });
         } else {
             setErrors(loginValidation.errors);
         }
@@ -51,16 +85,49 @@ function Home() {
         const signupValidation = validateSignup(username(), email(), password(), confirmPassword());
         
         if (signupValidation.isValid) {
-            toast.success("Successfully registered!");
-            closeAuth();
+            fetch("http://stackture.eloquenceprojects.org/auth/register", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username(),
+                    email: email(),
+                    password: password()
+                })
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    return response.json().then(data => {
+                        throw new Error(data.error || `Error: ${response.status}`);
+                    });
+                }
+            })
+            .then(data => {
+                if (data.token) {
+                    localStorage.setItem("authToken", data.token);
+                    toast.success("Successfully registered!");
+                    closeAuth();
+                    navigate("/dashboard");
+                } else {
+                    toast.error("Registration successful but no token received");
+                }
+            })
+            .catch(error => {
+                console.error("Registration error:", error.message);
+                if (error.message === "UserAlreadyExists") {
+                    setErrors({...errors(), username: "Username already exists"});
+                } else if (error.message === "EmailAlreadyUsed") {
+                    setErrors({...errors(), email: "Email already in use"});
+                } else {
+                    toast.error(`Registration failed: ${error.message}`);
+                }
+            });
         } else {
             setErrors(signupValidation.errors);
         }
-    }
-
-    function navigateToDashboard() {
-        navigate("/dashboard");
-        toast.success("Successfully logged in");
     }
 
     onMount(() => {

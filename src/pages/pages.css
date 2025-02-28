@@ -216,29 +216,65 @@
 }
 
 
-#about-page .page-content {
-    background-color: #05042c;
+#about-page {
+    .page-content {
+        background-color: #05042c;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        h1 {
+            font-family: 'Lilita One';
+            font-size: 3rem;
+            color: white;
+        }
+        h3 {
+            font-family: 'Lilita One';
+            font-size: 1.5rem;
+            color: white;
+        }
+        p {
+            font-family: 'Kanit';
+            font-size: 1.5rem;
+            color: white;
+            text-align: center;
+            margin: 0;
+        }
+        .introduction-space {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .description-space {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            p {
+                font-family: 'Kanit';
+                font-size: 1rem;
+                color: white;
+                text-align: center;
+                margin: 0;
+            }
+        }
+        .image-space {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+}
+    
+.content-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    h1 {
-        font-family: 'Lilita One';
-        font-size: 3rem;
-        color: white;
-    }
-    h3 {
-        font-family: 'Lilita One';
-        font-size: 1.5rem;
-        color: white;
-    }
-
-    p {
-        font-family: 'Kanit';
-        font-size: 1rem;
-        color: white;
-        text-align: center;
-        margin: 0;
-    }
+    width: 100%;
+    justify-content: center;
 }
 
 #workspaces {
