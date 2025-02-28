@@ -19,7 +19,7 @@ export function spawnContext(e, children) {
 
 const [contextOpen, setContextOpen] = createSignal(false);
 
-function ContextMenu(props) { 
+function ContextMenu(props) {
     
     let self;
 

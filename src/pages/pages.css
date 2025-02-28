@@ -5,6 +5,7 @@
     flex-direction: column;
     padding: 0;
     overflow-x: hidden;
+    position: relative;
     .page-content {
         flex-grow: 1;
     }
@@ -53,6 +54,33 @@
         font-size: 1.2rem;
         color: white;
         text-decoration: none;
+    }
+    a:last-of-type {
+        margin-right: auto;
+    }
+    .user-profile {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    .user-details {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-end;
+    }
+    label {
+        margin: 0;
+        font-family: 'Kanit';
+        font-size: 0.8rem;
+        color: #fff;
+        text-decoration: underline;
+    }
+    p {
+        margin: 0;
+        font-family: 'Kanit';
+        font-size: 0.6rem;
+        color: #fff;
     }
 }
 
@@ -330,6 +358,13 @@
     .workspace-card:hover {
         background-color: #241ed6;
     }
+}
+
+#workspaces:has(.workspace-card:nth-child(4)) {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 @keyframes fadeIn {

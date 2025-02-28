@@ -9,11 +9,11 @@ function Navigation() {
             <A href="/">Home</A>
             <A href="/about">About</A>
             <Show when={user() !== null}>
-                <div>
-                    <label>Username</label>
-                    <label>Email</label>
-                </div>
-                <div>
+                <div class="user-profile">
+                    <div class="user-details">
+                        <label>{user()}</label>
+                        <p>Signed In</p>
+                    </div>
                     <img src={ProfilePlaceholder} height="30px" />
                 </div>
             </Show>

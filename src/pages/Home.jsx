@@ -5,6 +5,7 @@ import "./pages.css";
 import { useNavigate } from "@solidjs/router";
 import toast from "solid-toast";
 import { validateLogin, validateSignup } from "../scripts/auth";
+import { login, setUser } from "../App";
 
 function Home() {
 
@@ -67,6 +68,7 @@ function Home() {
                     }
                 } else if (data.token) {
                     localStorage.setItem("authToken", data.token);
+                    login(username());
                     navigate("/dashboard");
                     toast.success("Successfully logged in");
                 }
@@ -96,23 +98,23 @@ function Home() {
                     password: password()
                 })
             })
-            .then(response => {
+            .then(async response => {
                 if (response.status === 200) {
                     return response.json();
                 } else {
-                    return response.json().then(data => {
-                        throw new Error(data.error || `Error: ${response.status}`);
-                    });
+                    const data = await response.json();
+                    throw new Error(data.error || `Error: ${response.status}`);
                 }
             })
             .then(data => {
                 if (data.token) {
                     localStorage.setItem("authToken", data.token);
                     toast.success("Successfully registered!");
+                    login(username());
                     closeAuth();
                     navigate("/dashboard");
                 } else {
-                    toast.error("Registration successful but no token received");
+                    toast.error("Token failed to generate. Please try again.");
                 }
             })
             .catch(error => {
