@@ -1,13 +1,13 @@
-import { createSignal, onMount, onCleanup } from "solid-js";
+import { createSignal, onMount, onCleanup, Show } from "solid-js";
 import Navigation from "../components/Navigation";
 import HandIcon from "./../assets/hand_icon.svg";
 import "./pages.css";
-import { createStore } from "solid-js/store";
+import { createStore, unwrap } from "solid-js/store";
 import toast from "solid-toast";
 import { logout } from "../App";
 import { useNavigate } from "@solidjs/router";
 import ELK from "elkjs/lib/elk.bundled.js";
-
+import Tooltip from "../menus/Tooltip";
 
 function Workspace() {
 
@@ -19,6 +19,8 @@ function Workspace() {
     const [nodes, setNodes] = createSignal([]);
     const [edges, setEdges] = createSignal([]);
 
+    const [socket, setSocket] = createSignal(null);
+    const [tooltip, setTooltip] = createSignal(null);
     const [chatOpen, setChatOpen] = createSignal(false);
     const [messages, setMessages] = createSignal([]);
     const [input, setInput] = createSignal('');
@@ -81,18 +83,17 @@ function Workspace() {
 
     function sendMessage() {
         if (!input().trim()) return;
-
-        setMessages([...messages(), { text: input(), sender: 'user' }]);
-
-        setTimeout(() => {
-            setMessages([...messages(), {
-                text: "I'm your AI assistant. How can I help with your workspace?",
-                sender: 'ai'
-            }]);
-        }, 1000);
-
+    
+        const message = input().trim();
+        setMessages([...messages(), { text: message, sender: 'user' }]);
+    
+        if (socket()) {
+            socket().send(JSON.stringify({ message }));
+        }
+    
         setInput('');
     }
+    
 
     function handleKeyPress(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -158,113 +159,114 @@ function Workspace() {
         }
     }
 
-    // function makeDummyState() {
-    //     let dummy = [
-    //         {
-    //             "id": 1,
-    //             "name": "Build a Chat App with PHP & MySQL",
-    //             "summary": "The main problem to solve.",
-    //             "optional": false,
-    //             "resolved": false,
-    //             "icon": "🏆",
-    //             "branches": [2, 3, 4],
-    //             "parents": []
-    //         },
-    //         {
-    //             "id": 2,
-    //             "name": "Set Up Development Environment",
-    //             "summary": "Install necessary tools like PHP, MySQL, and a web server.",
-    //             "optional": false,
-    //             "resolved": false,
-    //             "icon": "🖥",
-    //             "branches": [5, 6],
-    //             "parents": [1]
-    //         },
-    //         {
-    //             "id": 3,
-    //             "name": "Design the Database Schema",
-    //             "summary": "Plan tables for users, messages, and chat rooms.",
-    //             "optional": false,
-    //             "resolved": false,
-    //             "icon": "🗄",
-    //             "branches": [7, 8],
-    //             "parents": [1]
-    //         },
-    //         {
-    //             "id": 4,
-    //             "name": "Set Up User Authentication",
-    //             "summary": "Allow users to register and log in securely.",
-    //             "optional": false,
-    //             "resolved": false,
-    //             "icon": "🔐",
-    //             "branches": [9, 10],
-    //             "parents": [1]
-    //         },
-    //         {
-    //             "id": 5,
-    //             "name": "Install PHP & MySQL",
-    //             "summary": "Ensure PHP, MySQL, and a server like Apache or Nginx are installed.",
-    //             "optional": false,
-    //             "resolved": false,
-    //             "icon": "⚙️",
-    //             "branches": [],
-    //             "parents": [2]
-    //         },
-    //         {
-    //             "id": 6,
-    //             "name": "Set Up Local Dev Server",
-    //             "summary": "Use XAMPP, MAMP, or manual setup to create a development server.",
-    //             "optional": false,
-    //             "resolved": false,
-    //             "icon": "🌍",
-    //             "branches": [],
-    //             "parents": [2]
-    //         },
-    //         {
-    //             "id": 7,
-    //             "name": "Create Users Table",
-    //             "summary": "Define columns for user info like username, email, and password.",
-    //             "optional": false,
-    //             "resolved": false,
-    //             "icon": "👤",
-    //             "branches": [],
-    //             "parents": [3]
-    //         },
-    //         {
-    //             "id": 8,
-    //             "name": "Create Messages Table",
-    //             "summary": "Store messages with sender, receiver, and timestamps.",
-    //             "optional": false,
-    //             "resolved": false,
-    //             "icon": "💬",
-    //             "branches": [],
-    //             "parents": [3]
-    //         },
-    //         {
-    //             "id": 9,
-    //             "name": "Implement Login System",
-    //             "summary": "Handle user sessions and authentication using PHP sessions.",
-    //             "optional": false,
-    //             "resolved": false,
-    //             "icon": "🔑",
-    //             "branches": [],
-    //             "parents": [4]
-    //         },
-    //         {
-    //             "id": 10,
-    //             "name": "Implement User Registration",
-    //             "summary": "Allow new users to sign up and store credentials securely.",
-    //             "optional": false,
-    //             "resolved": false,
-    //             "icon": "📝",
-    //             "branches": [],
-    //             "parents": [4]
-    //         }
-    //     ];
+    // DEBUG FUNCTION TO INITIALIZE DUMMY TREE STATE
+    function makeDummyState() {
+        let dummy = [
+            {
+                "id": 1,
+                "name": "Build a Chat App with PHP & MySQL",
+                "summary": "The main problem to solve.",
+                "optional": false,
+                "resolved": false,
+                "icon": "🏆",
+                "branches": [2, 3, 4],
+                "parents": []
+            },
+            {
+                "id": 2,
+                "name": "Set Up Development Environment",
+                "summary": "Install necessary tools like PHP, MySQL, and a web server.",
+                "optional": false,
+                "resolved": false,
+                "icon": "🖥",
+                "branches": [5, 6],
+                "parents": [1]
+            },
+            {
+                "id": 3,
+                "name": "Design the Database Schema",
+                "summary": "Plan tables for users, messages, and chat rooms.",
+                "optional": false,
+                "resolved": false,
+                "icon": "🗄",
+                "branches": [7, 8],
+                "parents": [1]
+            },
+            {
+                "id": 4,
+                "name": "Set Up User Authentication",
+                "summary": "Allow users to register and log in securely.",
+                "optional": false,
+                "resolved": false,
+                "icon": "🔐",
+                "branches": [9, 10],
+                "parents": [1]
+            },
+            {
+                "id": 5,
+                "name": "Install PHP & MySQL",
+                "summary": "Ensure PHP, MySQL, and a server like Apache or Nginx are installed.",
+                "optional": false,
+                "resolved": false,
+                "icon": "⚙️",
+                "branches": [],
+                "parents": [2]
+            },
+            {
+                "id": 6,
+                "name": "Set Up Local Dev Server",
+                "summary": "Use XAMPP, MAMP, or manual setup to create a development server.",
+                "optional": false,
+                "resolved": false,
+                "icon": "🌍",
+                "branches": [],
+                "parents": [2]
+            },
+            {
+                "id": 7,
+                "name": "Create Users Table",
+                "summary": "Define columns for user info like username, email, and password.",
+                "optional": false,
+                "resolved": false,
+                "icon": "👤",
+                "branches": [],
+                "parents": [3]
+            },
+            {
+                "id": 8,
+                "name": "Create Messages Table",
+                "summary": "Store messages with sender, receiver, and timestamps.",
+                "optional": false,
+                "resolved": false,
+                "icon": "💬",
+                "branches": [],
+                "parents": [3]
+            },
+            {
+                "id": 9,
+                "name": "Implement Login System",
+                "summary": "Handle user sessions and authentication using PHP sessions.",
+                "optional": false,
+                "resolved": false,
+                "icon": "🔑",
+                "branches": [],
+                "parents": [4]
+            },
+            {
+                "id": 10,
+                "name": "Implement User Registration",
+                "summary": "Allow new users to sign up and store credentials securely.",
+                "optional": false,
+                "resolved": false,
+                "icon": "📝",
+                "branches": [],
+                "parents": [4]
+            }
+        ];
 
-    //     setTree(dummy);
-    //     updateGraph(dummy);
-    // }
+        setTree(dummy);
+        updateGraph(dummy);
+    }
 
     // === Main Function to Update the Graph ===
     async function updateGraph(treeData) {
@@ -435,6 +437,26 @@ function Workspace() {
         // getWorkspaceState();
         makeDummyState();
         console.log(tree);
+        const ws = new WebSocket("ws://stackture.eloquenceprojects.org/chat");
+        ws.onopen = () => {
+            console.log("Connected to WebSocket chat!");
+        };
+        ws.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                setMessages([...messages(), { text: data.response, sender: "ai" }]);
+            } catch (error) {
+                console.error("Failed to parse WebSocket message:", error);
+            }
+        };
+        ws.onerror = (error) => {
+            console.error("WebSocket error:", error);
+            toast.error("Chat connection error.");
+        };
+        ws.onclose = () => {
+            console.log("Chat WebSocket closed.");
+        };
+        setSocket(ws);
     });
 
     onCleanup(() => {
@@ -442,6 +464,9 @@ function Workspace() {
         window.removeEventListener('keyup', handleKeyUp);
         window.removeEventListener('mousemove', handleMouseMove);
         window.removeEventListener('mouseup', handleMouseUp);
+        if (socket()) {
+            socket().close();
+        }
     });
 
     function getViewBox() {
@@ -470,7 +495,7 @@ function Workspace() {
                             <line
                                 x1={nodes().find(n => n.id === edge.source).position.x + 2}
                                 y1={nodes().find(n => n.id === edge.source).position.y}
-                                x2={nodes().find(n => n.id === edge.target).position.x - 2} 
+                                x2={nodes().find(n => n.id === edge.target).position.x - 2}
                                 y2={nodes().find(n => n.id === edge.target).position.y}
                                 stroke="#00b1b1"
                                 style="stroke-width:8"
@@ -481,7 +506,25 @@ function Workspace() {
                             />
                         ))}
                         {nodes().map(node => (
-                            <g transform={`translate(${node.position.x}, ${node.position.y})`} key={node.id}>
+                            <g
+                                transform={`translate(${node.position.x}, ${node.position.y})`}
+                                key={node.id}
+                                onMouseEnter={(e) => {
+                                    if (!tooltip()) {
+                                        const fullNode = unwrap(tree.find(n => n.id == node.id));
+                                        console.log(unwrap(tree));
+                                        console.log(nodes());
+                                        if (fullNode) {
+                                            setTooltip({
+                                                name: fullNode.name,
+                                                summary: fullNode.summary,
+                                                x: e.clientX,
+                                                y: e.clientY
+                                            });
+                                        }
+                                    }
+                                }}
+                                onMouseLeave={() => setTooltip(null)}>
                                 <circle
                                     r="30"
                                     fill="#1e80d6"
@@ -545,6 +588,13 @@ function Workspace() {
                     </button>
                 </div>
             </div>
+            <Show when={tooltip() !== null}>
+                <Tooltip
+                    name={tooltip().name}
+                    summary={tooltip().summary}
+                    x={tooltip().x}
+                    y={tooltip().y} />
+            </Show>
         </div>
     );
 }

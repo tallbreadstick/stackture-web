@@ -94,3 +94,20 @@
         opacity: 1;
     }
 }
+
+.tooltip {
+    background-color: #1a1774;
+    max-width: 200px;
+    padding: 10px;
+    box-sizing: border-box;
+    font-family: 'Kanit';
+    color: #fff;
+    border-radius: 18px;
+    box-shadow: 2px 2px 8px #05042c;
+    label {
+        font-size: 1.2rem;
+    }
+    p {
+        font-size: 0.9rem;
+    }
+}
