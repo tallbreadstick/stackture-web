@@ -74,7 +74,8 @@ function Dashboard() {
         fetch("http://stackture.eloquenceprojects.org/api/workspace/create", {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${token}`
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
                 title: title.value,
@@ -85,6 +86,7 @@ function Dashboard() {
             let data;
             try {
                 data = await response.json();
+                console.log(data);
             } catch (err) {
                 toast.error("Failed to create workspace");
                 return;

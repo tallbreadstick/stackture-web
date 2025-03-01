@@ -413,6 +413,12 @@
         background-position: center;
         transition: transform 0.05s linear;
         border: 2px solid rgba(255, 255, 255, 0.1);
+        text {
+            font-size: 2.5rem;
+            text-anchor: middle;
+            dominant-baseline: central;  /* Centers vertically */
+            text-shadow: 0 0 8px #1a1774;
+        }
     }
 }
 
