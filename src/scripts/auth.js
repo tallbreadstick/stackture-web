@@ -108,8 +108,8 @@ export const handleLogin = async (username, password, setErrors, navigate, toast
     }
 }
 
-export const handleSignup = async (username, email, password, setErrors, navigate, toast, closeAuth) => {
-    const signupValidation = validateSignup(username, email, password);
+export const handleSignup = async (username, email, password, confirmPassword, setErrors, navigate, toast, closeAuth) => {
+    const signupValidation = validateSignup(username, email, password, confirmPassword);
     
     if (signupValidation.isValid) {
         try {

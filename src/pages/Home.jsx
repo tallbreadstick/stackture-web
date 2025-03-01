@@ -46,7 +46,8 @@ function Home() {
         handleSignup(
             username(), 
             email(), 
-            password(), 
+            password(),
+            confirmPassword(),
             setErrors, 
             navigate, 
             toast, 

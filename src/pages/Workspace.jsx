@@ -88,7 +88,7 @@ function Workspace() {
         setMessages([...messages(), { text: message, sender: 'user' }]);
     
         if (socket()) {
-            socket().send(JSON.stringify({ message }));
+            socket().send(message);
         }
     
         setInput('');
@@ -434,17 +434,40 @@ function Workspace() {
         window.addEventListener('keyup', handleKeyUp);
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
-        // getWorkspaceState();
-        makeDummyState();
+        getWorkspaceState();
+        // makeDummyState();
         console.log(tree);
         const ws = new WebSocket("ws://stackture.eloquenceprojects.org/chat");
         ws.onopen = () => {
             console.log("Connected to WebSocket chat!");
+            ws.send(JSON.stringify({
+                workspace_id: parseInt(localStorage.getItem("workspace")),
+                node_id: 0,
+                token: localStorage.getItem("authToken")
+            }))
         };
         ws.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-                setMessages([...messages(), { text: data.response, sender: "ai" }]);
+                if (data.status == "error") {
+                    ws.onerror(new Event("Handshake Error"))
+                } else {
+                    ws.onmessage = (event) => {
+                        try {
+                            const data = JSON.parse(event.data);
+
+                            if ("message" in data) {
+                                setMessages([...messages(), { text: data.message, sender: "ai" }]);
+                            }
+                        
+                            if ("tree_generated" in data && data.tree_generated !== null) {
+                                // render
+                            }
+                        } catch (error) {
+                            console.error("Failed to parse WebSocket message:", error);
+                        }
+                    };
+                }
             } catch (error) {
                 console.error("Failed to parse WebSocket message:", error);
             }
@@ -571,16 +594,22 @@ function Workspace() {
                 </div>
                 <div class="chat-messages">
                     {messages().map((message, index) => (
-                        <div class={`message ${message.sender}`}>
-                            {message.text}
-                        </div>
+                        <div class={`message ${message.sender}`} innerHTML={message.text.replaceAll('\n', "<br>")}></div>
                     ))}
                 </div>
                 <div class="chat-input-area">
                     <textarea
                         value={input()}
-                        onInput={(e) => setInput(e.target.value)}
-                        onKeyPress={handleKeyPress}
+                        onKeyUp={(e) => {
+                            if (e.key && e.key == ' ') {
+                                e.target.value += ' ';
+                                e.preventDefault();
+                            }
+                        }}
+                        onKeyPress={ (e) => {
+                            setInput(e.target.value);
+                            handleKeyPress(e);
+                        }}
                         placeholder="Ask something about your workspace..."
                     />
                     <button onClick={sendMessage}>
