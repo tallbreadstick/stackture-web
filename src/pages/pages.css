@@ -403,7 +403,9 @@
     .grid-container {
         position: absolute;
         width: 200%;
-        height: 200%;
+        height: 400%;
+        /* width: fit-content;
+        height: fit-content; */
         left: -50%;
         top: -50%;
         background-image: 
@@ -418,6 +420,10 @@
             text-anchor: middle;
             dominant-baseline: central;  /* Centers vertically */
             text-shadow: 0 0 8px #1a1774;
+            user-select: none;
+        }
+        line {
+            z-index: 500;
         }
     }
 }

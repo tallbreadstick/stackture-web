@@ -43,35 +43,35 @@ function Workspace() {
                 "Authorization": `Bearer ${token}`
             }
         })
-        .then(async response => {
-            let data;
-            try {    
-                data = await response.json();
-            } catch (err) {
-                console.log(err);
-                toast.error("Failed to get workspace state");
-                return;
-            }
-            if (!response.ok) {
-                if (data.error === "TokenExpired") {
-                    toast.error("Token expired. Please log in.");
-                    logout();
-                    navigate("/");
+            .then(async response => {
+                let data;
+                try {
+                    data = await response.json();
+                } catch (err) {
+                    console.log(err);
+                    toast.error("Failed to get workspace state");
                     return;
                 }
-                throw new Error(data.error || `Error: ${response.status}`);
-            }
-            if (data.length === 0) {
-                setTree([]);
-                return;
-            }
-            setTree(data);
-            console.log(data);
-        })
-        .catch(error => {
-            console.error("Failed to get workspace state:", error);
-            toast.error("Failed to get workspace. Try again later.");
-        })
+                if (!response.ok) {
+                    if (data.error === "TokenExpired") {
+                        toast.error("Token expired. Please log in.");
+                        logout();
+                        navigate("/");
+                        return;
+                    }
+                    throw new Error(data.error || `Error: ${response.status}`);
+                }
+                if (data.length === 0) {
+                    setTree([]);
+                    return;
+                }
+                setTree(data);
+                console.log(data);
+            })
+            .catch(error => {
+                console.error("Failed to get workspace state:", error);
+                toast.error("Failed to get workspace. Try again later.");
+            })
     }
 
     function toggleChat() {
@@ -80,16 +80,16 @@ function Workspace() {
 
     function sendMessage() {
         if (!input().trim()) return;
-        
+
         setMessages([...messages(), { text: input(), sender: 'user' }]);
-        
+
         setTimeout(() => {
-            setMessages([...messages(), { 
-                text: "I'm your AI assistant. How can I help with your workspace?", 
-                sender: 'ai' 
+            setMessages([...messages(), {
+                text: "I'm your AI assistant. How can I help with your workspace?",
+                sender: 'ai'
             }]);
         }, 1000);
-        
+
         setInput('');
     }
 
@@ -115,27 +115,27 @@ function Workspace() {
         if (isDragging()) {
             const deltaX = e.clientX - dragStart().x;
             const deltaY = e.clientY - dragStart().y;
-            
+
             const currentX = canvasPosition().x;
             const currentY = canvasPosition().y;
-            
+
             let newX = currentX + deltaX;
             let newY = currentY + deltaY;
-            
+
             const gridRect = gridContainerRef.getBoundingClientRect();
             const canvasRect = gridContainerRef.parentElement.getBoundingClientRect();
-            
+
             const extraWidth = (gridRect.width - canvasRect.width) / 2;
             const extraHeight = (gridRect.height - canvasRect.height) / 2;
-            
+
             const minX = -extraWidth;
-            const maxX = extraWidth;  
-            const minY = -extraHeight; 
-            const maxY = extraHeight;  
-            
+            const maxX = extraWidth;
+            const minY = -extraHeight;
+            const maxY = extraHeight;
+
             newX = Math.max(minX, Math.min(newX, maxX));
             newY = Math.max(minY, Math.min(newY, maxY));
-            
+
             setCanvasPosition({ x: newX, y: newY });
             setDragStart({ x: e.clientX, y: e.clientY });
         }
@@ -161,140 +161,270 @@ function Workspace() {
         let dummy = [
             {
                 "id": 1,
-                "name": "Root Problem",
+                "name": "Build a Chat App with PHP & MySQL",
                 "summary": "The main problem to solve.",
                 "optional": false,
                 "resolved": false,
-                "icon": "📌",
-                "branches": [2, 3],
+                "icon": "🏆",
+                "branches": [2, 3, 4],
                 "parents": []
             },
             {
                 "id": 2,
-                "name": "Subproblem A",
-                "summary": "A required step.",
+                "name": "Set Up Development Environment",
+                "summary": "Install necessary tools like PHP, MySQL, and a web server.",
                 "optional": false,
                 "resolved": false,
-                "icon": "📎",
-                "branches": [],
+                "icon": "🖥",
+                "branches": [5, 6],
                 "parents": [1]
             },
             {
                 "id": 3,
-                "name": "Subproblem B",
-                "summary": "An alternative path.",
-                "optional": true,
+                "name": "Design the Database Schema",
+                "summary": "Plan tables for users, messages, and chat rooms.",
+                "optional": false,
                 "resolved": false,
-                "icon": "📎",
-                "branches": [],
+                "icon": "🗄",
+                "branches": [7, 8],
                 "parents": [1]
+            },
+            {
+                "id": 4,
+                "name": "Set Up User Authentication",
+                "summary": "Allow users to register and log in securely.",
+                "optional": false,
+                "resolved": false,
+                "icon": "🔐",
+                "branches": [9, 10],
+                "parents": [1]
+            },
+            {
+                "id": 5,
+                "name": "Install PHP & MySQL",
+                "summary": "Ensure PHP, MySQL, and a server like Apache or Nginx are installed.",
+                "optional": false,
+                "resolved": false,
+                "icon": "⚙️",
+                "branches": [],
+                "parents": [2]
+            },
+            {
+                "id": 6,
+                "name": "Set Up Local Dev Server",
+                "summary": "Use XAMPP, MAMP, or manual setup to create a development server.",
+                "optional": false,
+                "resolved": false,
+                "icon": "🌍",
+                "branches": [],
+                "parents": [2]
+            },
+            {
+                "id": 7,
+                "name": "Create Users Table",
+                "summary": "Define columns for user info like username, email, and password.",
+                "optional": false,
+                "resolved": false,
+                "icon": "👤",
+                "branches": [],
+                "parents": [3]
+            },
+            {
+                "id": 8,
+                "name": "Create Messages Table",
+                "summary": "Store messages with sender, receiver, and timestamps.",
+                "optional": false,
+                "resolved": false,
+                "icon": "💬",
+                "branches": [],
+                "parents": [3]
+            },
+            {
+                "id": 9,
+                "name": "Implement Login System",
+                "summary": "Handle user sessions and authentication using PHP sessions.",
+                "optional": false,
+                "resolved": false,
+                "icon": "🔑",
+                "branches": [],
+                "parents": [4]
+            },
+            {
+                "id": 10,
+                "name": "Implement User Registration",
+                "summary": "Allow new users to sign up and store credentials securely.",
+                "optional": false,
+                "resolved": false,
+                "icon": "📝",
+                "branches": [],
+                "parents": [4]
             }
         ];
+
         setTree(dummy);
-        updateGraph(tree);
+        updateGraph(dummy);
     }
 
+    // === Main Function to Update the Graph ===
     async function updateGraph(treeData) {
-        if (!treeData.length) return;
-    
-        // Find actual root node (node without parents)
-        const childIds = new Set(treeData.flatMap(node => node.branches));
-        const rootNode = treeData.find(node => !childIds.has(node.id));
+        if (!treeData?.length) return;
+
+        const rootNode = findRootNode(treeData);
         if (!rootNode) return;
-    
-        // Create ELK Graph structure
-        const elkGraph = {
-            id: String(rootNode.id),
-            children: treeData.map(node => ({ id: String(node.id), width: 50, height: 50 })), // Circular size
-            edges: treeData.flatMap(node => node.branches.map(branchId => ({
-                id: `edge-${node.id}-${branchId}`,
-                sources: [String(node.id)],
-                targets: [String(branchId)]
-            })))
-        };
-    
+
+        // Build a flat ELK graph (only used for initial node position info)
+        const elkGraph = createElkGraph(treeData, rootNode.id);
         const elk = new ELK();
+
         const layout = await elk.layout(elkGraph, {
             layoutOptions: {
                 "elk.algorithm": "layered",
                 "elk.direction": "DOWN",
+                "elk.spacing.nodeNode": "50",
+                "elk.layered.spacing.nodeNodeBetweenLayers": "30",
+                "elk.edgeRouting": "ORTHOGONAL",
                 "nodePlacement.strategy": "NETWORK_SIMPLEX"
             }
         });
-    
-        if (!layout.children) return; // Avoid crashes if ELK fails
-    
-        // Get canvas width (assuming the canvas has `class="grid-container"`)
-        const canvas = document.querySelector(".grid-container");
-        const canvasWidth = canvas ? canvas.offsetWidth : 800; // Default width if not found
-        const centerX = canvasWidth / 2;
-    
-        // Find root's current x position
-        const rootLayout = layout.children.find(n => n.id === String(rootNode.id));
-        const rootX = rootLayout ? rootLayout.x || 0 : 0;
-    
-        // Compute offset so root starts at the center of the canvas
-        const offsetX = centerX - rootX;
-    
-        // === BFS to determine node levels ===
-        const levelMap = new Map();
-        const queue = [{ id: String(rootNode.id), depth: 0 }];
-    
-        while (queue.length) {
-            const { id, depth } = queue.shift();
-            if (!levelMap.has(depth)) levelMap.set(depth, []);
-            levelMap.get(depth).push(id);
-    
-            // Add children to queue
-            const children = layout.edges
-                .filter(edge => edge.sources[0] === id)
-                .map(edge => ({ id: edge.targets[0], depth: depth + 1 }));
-    
-            queue.push(...children);
+        if (!layout.children) return;
+
+        const nodeDepths = computeNodeDepths(treeData, rootNode.id);
+        // Calculate positions for each node based on our custom logic
+        const updatedNodes = adjustNodePositions(layout, treeData, nodeDepths);
+
+        // Generate edges by doing an exhaustive DFS from the root,
+        // making sure to skip duplicate edges with a seen set.
+        const updatedEdges = generateEdges(treeData, String(rootNode.id));
+
+        setNodes(updatedNodes);
+        setEdges(updatedEdges);
+    }
+
+    // === Helper: Identify the Root Node ===
+    function findRootNode(treeData) {
+        const childIds = new Set(treeData.flatMap(node => node.branches));
+        return treeData.find(node => !childIds.has(node.id));
+    }
+
+    // === Helper: Build the ELK Graph Structure ===
+    function createElkGraph(treeData, rootId) {
+        return {
+            id: String(rootId),
+            children: treeData.map(node => ({
+                id: String(node.id),
+                width: 60,
+                height: 60
+            })),
+            edges: treeData.flatMap(node =>
+                node.branches.map(branchId => ({
+                    id: `edge-${node.id}-${branchId}`,
+                    sources: [String(node.id)],
+                    targets: [String(branchId)]
+                }))
+            )
+        };
+    }
+
+    // === Helper: Compute Node Depths (DFS) ===
+    function computeNodeDepths(treeData, rootId) {
+        const depths = {};
+        function dfs(nodeId, depth) {
+            if (depths[nodeId] !== undefined) return;
+            depths[nodeId] = depth;
+            const node = treeData.find(n => String(n.id) === nodeId);
+            if (node) {
+                node.branches.forEach(childId => dfs(String(childId), depth + 1));
+            }
         }
-    
-        // === Adjust node positions based on levelMap ===
-        const xSpacing = 200; // Space between siblings
-        const ySpacing = 150; // Space between levels
-        const rootOffsetY = 300; // Move root node down by 300px
-    
-        const updatedNodes = layout.children.map(n => {
-            const depth = [...levelMap.entries()].find(([, ids]) => ids.includes(n.id))?.[0] || 0;
-            const siblings = levelMap.get(depth) || [];
-    
-            const levelWidth = siblings.length * xSpacing;
-            const xPosition = centerX - levelWidth / 2 + siblings.indexOf(n.id) * xSpacing;
-    
-            const nodeData = treeData.find(t => String(t.id) === n.id);
-    
+        dfs(String(rootId), 0);
+        return depths;
+    }
+
+    // === Helper: Adjust Node Positions Based on Level Grouping ===
+    function adjustNodePositions(elkLayout, treeData, nodeDepths) {
+        const canvas = document.querySelector(".grid-container");
+        const canvasWidth = canvas ? canvas.offsetWidth : 800;
+        const ySpacing = 120;
+        const rootOffsetY = 200;
+
+        // Group nodes by depth level
+        const levels = {};
+        elkLayout.children.forEach(child => {
+            const depth = nodeDepths[child.id] ?? 0;
+            if (!levels[depth]) levels[depth] = [];
+            levels[depth].push(child);
+        });
+
+        // For each node, assign an x position evenly within its level
+        return elkLayout.children.map(child => {
+            const depth = nodeDepths[child.id] ?? 0;
+            const levelNodes = levels[depth];
+            const count = levelNodes.length;
+            const index = levelNodes.findIndex(n => n.id === child.id);
+
+            // Evenly space nodes horizontally across the canvas width
+            const gap = (canvasWidth - (canvasWidth / 2)) / (count + 1);
+            const xPosition = gap * (index + 1);
+            const yPosition = rootOffsetY + depth * ySpacing;
+
+            // Get a dynamic label (using icon, name, or id)
+            const treeNode = treeData.find(n => String(n.id) === child.id);
+            const label = treeNode ? (treeNode.icon || treeNode.name || treeNode.id) : child.id;
+
             return {
-                id: n.id,
-                position: { x: xPosition, y: depth * ySpacing + rootOffsetY }, // Apply root offset
-                data: { label: nodeData?.icon || "❓" }, // Emoji as label
+                id: child.id,
+                position: { x: xPosition, y: yPosition },
+                data: { label },
                 style: {
-                    width: 60,  // Slightly bigger node
+                    width: 60,
                     height: 60,
                     borderRadius: "50%",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "30px", // Bigger emoji
-                    backgroundColor: "#1e80d6", // Node color
-                    color: "white", // Ensure emoji is visible
-                    border: "2px solid #000"
+                    fontSize: "30px",
+                    backgroundColor: "#1e80d6",
+                    color: "white",
+                    border: "2px solid #000",
+                    textAlign: "center"
                 }
             };
         });
-    
-        setNodes(updatedNodes);
-        setEdges(layout.edges.map(e => ({
-            id: e.id,
-            source: e.sources[0],
-            target: e.targets[0],
-            style: { stroke: "#1a1774", strokeWidth: 2 } // Edge color
-        })));
     }
-    
+
+    // === Helper: Generate Edges via DFS with Edge-Level Tracking ===
+    function generateEdges(treeData, rootId) {
+        const edges = [];
+        const seenEdges = new Set();
+
+        function dfs(nodeId) {
+            const node = treeData.find(n => String(n.id) === String(nodeId));
+            if (!node) return;
+
+            node.branches.forEach(childId => {
+                const edgeKey = `${nodeId}->${childId}`;
+                // Only add this edge if it hasn't been added yet
+                if (!seenEdges.has(edgeKey)) {
+                    console.log(`edge-${nodeId}-${childId}`);
+                    edges.push({
+                        id: `edge-${nodeId}-${childId}`,
+                        source: String(nodeId),
+                        target: String(childId),
+                        style: { stroke: "#1a1774", strokeWidth: 2 }
+                    });
+                    seenEdges.add(edgeKey);
+                }
+                // Continue DFS from the child regardless of whether an edge was already drawn to it
+                dfs(childId);
+            });
+        }
+
+        dfs(String(rootId));
+        console.log([...document.querySelectorAll("line")]);
+        return edges;
+    }
+
+
     onMount(() => {
         document.title = "Stackture - Workspace";
         window.addEventListener('keydown', handleKeyDown);
@@ -313,29 +443,39 @@ function Workspace() {
         window.removeEventListener('mouseup', handleMouseUp);
     });
 
+    function getViewBox() {
+        const minX = Math.min(...nodes().map(n => n.position.x), 0) - 50;
+        const minY = Math.min(...nodes().map(n => n.position.y), 0) - 50;
+        const maxX = Math.max(...nodes().map(n => n.position.x), 2000) + 50;
+        const maxY = Math.max(...nodes().map(n => n.position.y), 2000) + 50;
+        const viewBox = `${minX} ${minY} ${maxX - minX} ${maxY - minY}`;
+        return viewBox;
+    }
+
     return (
         <div id="workspace-page" class="page">
             <Navigation />
-            <div 
-                class={`ws-canvas ${isDraggable() || spaceKeyPressed() ? 'draggable' : ''} ${isDragging() ? 'dragging' : ''}`} 
+            <div
+                class={`ws-canvas ${isDraggable() || spaceKeyPressed() ? 'draggable' : ''} ${isDragging() ? 'dragging' : ''}`}
                 onMouseDown={handleMouseDown}
             >
-                <div 
-                    class="grid-container" 
+                <div
+                    class="grid-container"
                     ref={gridContainerRef}
                     style={`transform: translate(${canvasPosition().x}px, ${canvasPosition().y}px)`}
                 >
-                    <svg width="100%" height="100%">
+                    <svg width="100%" height="100%" viewBox={getViewBox()}>
                         {edges().map(edge => (
                             <line
-                                x1={nodes().find(n => n.id === edge.source).position.x}
+                                x1={nodes().find(n => n.id === edge.source).position.x + 2}
                                 y1={nodes().find(n => n.id === edge.source).position.y}
-                                x2={nodes().find(n => n.id === edge.target).position.x}
+                                x2={nodes().find(n => n.id === edge.target).position.x - 2} 
                                 y2={nodes().find(n => n.id === edge.target).position.y}
                                 stroke="#00b1b1"
-                                style="stroke-width:5"
+                                style="stroke-width:8"
                                 strokeLinecap="round"
                                 filter="url(#shadow)"
+                                shapeRendering="geometricPrecision"
                                 vectorEffect="non-scaling-stroke"
                             />
                         ))}
@@ -346,12 +486,12 @@ function Workspace() {
                                     fill="#1e80d6"
                                     filter="url(#shadow)"
                                 />
-                                <text 
-                                    x="0" 
-                                    y="0" 
-                                    textAnchor="middle" 
-                                    dominantBaseline="middle" 
-                                    fontSize="2rem" 
+                                <text
+                                    x="0"
+                                    y="0"
+                                    textAnchor="middle"
+                                    dominantBaseline="middle"
+                                    fontSize="2rem"
                                     fill="white"
                                 >
                                     {node.data.label}
@@ -393,8 +533,8 @@ function Workspace() {
                     ))}
                 </div>
                 <div class="chat-input-area">
-                    <textarea 
-                        value={input()} 
+                    <textarea
+                        value={input()}
                         onInput={(e) => setInput(e.target.value)}
                         onKeyPress={handleKeyPress}
                         placeholder="Ask something about your workspace..."
