@@ -30,6 +30,15 @@ function Workspace() {
     const [canvasPosition, setCanvasPosition] = createSignal({ x: 0, y: 0 });
     const [spaceKeyPressed, setSpaceKeyPressed] = createSignal(false);
 
+    function encodeHtml(text) {
+        return text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
     function getWorkspaceState() {
         const workspace_id = localStorage.getItem("workspace");
         const token = localStorage.getItem("authToken");
@@ -594,7 +603,7 @@ function Workspace() {
                 </div>
                 <div class="chat-messages">
                     {messages().map((message, index) => (
-                        <div class={`message ${message.sender}`} innerHTML={message.text.replaceAll('\n', "<br>")}></div>
+                        <div class={`message ${message.sender}`} innerHTML={message.text.split('\n').map(encodeHtml).join('<br>')}></div>
                     ))}
                 </div>
                 <div class="chat-input-area">
