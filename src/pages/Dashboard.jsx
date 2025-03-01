@@ -1,8 +1,9 @@
-import { createSignal, onMount } from "solid-js";
+import { createSignal, onMount, Show } from "solid-js";
 import Navigation from "../components/Navigation";
 import "./pages.css";
 import WorkspaceCard from "../components/WorkspaceCard";
 import AddIcon from "./../assets/add.svg";
+import LoadingAnimation from "./../assets/loading.gif";
 import { createStore } from "solid-js/store";
 import toast from "solid-toast";
 import { useNavigate } from "@solidjs/router";
@@ -150,6 +151,9 @@ function Dashboard() {
                             <label>New Workspace</label>
                         </div>
                     </div>
+                    <Show when={workspaces === null || workspaces.length === 0}>
+                        <img src={LoadingAnimation} width="200px" />
+                    </Show>
                     <For each={workspaces}>
                         {(item, index) => (
                             <WorkspaceCard title={item.title} description={item.description} onClick={() => visitWorkspace(index())} />

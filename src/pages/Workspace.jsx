@@ -66,6 +66,7 @@ function Workspace() {
                     return;
                 }
                 setTree(data);
+                updateGraph(tree);
                 console.log(data);
             })
             .catch(error => {
@@ -157,113 +158,113 @@ function Workspace() {
         }
     }
 
-    function makeDummyState() {
-        let dummy = [
-            {
-                "id": 1,
-                "name": "Build a Chat App with PHP & MySQL",
-                "summary": "The main problem to solve.",
-                "optional": false,
-                "resolved": false,
-                "icon": "🏆",
-                "branches": [2, 3, 4],
-                "parents": []
-            },
-            {
-                "id": 2,
-                "name": "Set Up Development Environment",
-                "summary": "Install necessary tools like PHP, MySQL, and a web server.",
-                "optional": false,
-                "resolved": false,
-                "icon": "🖥",
-                "branches": [5, 6],
-                "parents": [1]
-            },
-            {
-                "id": 3,
-                "name": "Design the Database Schema",
-                "summary": "Plan tables for users, messages, and chat rooms.",
-                "optional": false,
-                "resolved": false,
-                "icon": "🗄",
-                "branches": [7, 8],
-                "parents": [1]
-            },
-            {
-                "id": 4,
-                "name": "Set Up User Authentication",
-                "summary": "Allow users to register and log in securely.",
-                "optional": false,
-                "resolved": false,
-                "icon": "🔐",
-                "branches": [9, 10],
-                "parents": [1]
-            },
-            {
-                "id": 5,
-                "name": "Install PHP & MySQL",
-                "summary": "Ensure PHP, MySQL, and a server like Apache or Nginx are installed.",
-                "optional": false,
-                "resolved": false,
-                "icon": "⚙️",
-                "branches": [],
-                "parents": [2]
-            },
-            {
-                "id": 6,
-                "name": "Set Up Local Dev Server",
-                "summary": "Use XAMPP, MAMP, or manual setup to create a development server.",
-                "optional": false,
-                "resolved": false,
-                "icon": "🌍",
-                "branches": [],
-                "parents": [2]
-            },
-            {
-                "id": 7,
-                "name": "Create Users Table",
-                "summary": "Define columns for user info like username, email, and password.",
-                "optional": false,
-                "resolved": false,
-                "icon": "👤",
-                "branches": [],
-                "parents": [3]
-            },
-            {
-                "id": 8,
-                "name": "Create Messages Table",
-                "summary": "Store messages with sender, receiver, and timestamps.",
-                "optional": false,
-                "resolved": false,
-                "icon": "💬",
-                "branches": [],
-                "parents": [3]
-            },
-            {
-                "id": 9,
-                "name": "Implement Login System",
-                "summary": "Handle user sessions and authentication using PHP sessions.",
-                "optional": false,
-                "resolved": false,
-                "icon": "🔑",
-                "branches": [],
-                "parents": [4]
-            },
-            {
-                "id": 10,
-                "name": "Implement User Registration",
-                "summary": "Allow new users to sign up and store credentials securely.",
-                "optional": false,
-                "resolved": false,
-                "icon": "📝",
-                "branches": [],
-                "parents": [4]
-            }
-        ];
+    // function makeDummyState() {
+    //     let dummy = [
+    //         {
+    //             "id": 1,
+    //             "name": "Build a Chat App with PHP & MySQL",
+    //             "summary": "The main problem to solve.",
+    //             "optional": false,
+    //             "resolved": false,
+    //             "icon": "🏆",
+    //             "branches": [2, 3, 4],
+    //             "parents": []
+    //         },
+    //         {
+    //             "id": 2,
+    //             "name": "Set Up Development Environment",
+    //             "summary": "Install necessary tools like PHP, MySQL, and a web server.",
+    //             "optional": false,
+    //             "resolved": false,
+    //             "icon": "🖥",
+    //             "branches": [5, 6],
+    //             "parents": [1]
+    //         },
+    //         {
+    //             "id": 3,
+    //             "name": "Design the Database Schema",
+    //             "summary": "Plan tables for users, messages, and chat rooms.",
+    //             "optional": false,
+    //             "resolved": false,
+    //             "icon": "🗄",
+    //             "branches": [7, 8],
+    //             "parents": [1]
+    //         },
+    //         {
+    //             "id": 4,
+    //             "name": "Set Up User Authentication",
+    //             "summary": "Allow users to register and log in securely.",
+    //             "optional": false,
+    //             "resolved": false,
+    //             "icon": "🔐",
+    //             "branches": [9, 10],
+    //             "parents": [1]
+    //         },
+    //         {
+    //             "id": 5,
+    //             "name": "Install PHP & MySQL",
+    //             "summary": "Ensure PHP, MySQL, and a server like Apache or Nginx are installed.",
+    //             "optional": false,
+    //             "resolved": false,
+    //             "icon": "⚙️",
+    //             "branches": [],
+    //             "parents": [2]
+    //         },
+    //         {
+    //             "id": 6,
+    //             "name": "Set Up Local Dev Server",
+    //             "summary": "Use XAMPP, MAMP, or manual setup to create a development server.",
+    //             "optional": false,
+    //             "resolved": false,
+    //             "icon": "🌍",
+    //             "branches": [],
+    //             "parents": [2]
+    //         },
+    //         {
+    //             "id": 7,
+    //             "name": "Create Users Table",
+    //             "summary": "Define columns for user info like username, email, and password.",
+    //             "optional": false,
+    //             "resolved": false,
+    //             "icon": "👤",
+    //             "branches": [],
+    //             "parents": [3]
+    //         },
+    //         {
+    //             "id": 8,
+    //             "name": "Create Messages Table",
+    //             "summary": "Store messages with sender, receiver, and timestamps.",
+    //             "optional": false,
+    //             "resolved": false,
+    //             "icon": "💬",
+    //             "branches": [],
+    //             "parents": [3]
+    //         },
+    //         {
+    //             "id": 9,
+    //             "name": "Implement Login System",
+    //             "summary": "Handle user sessions and authentication using PHP sessions.",
+    //             "optional": false,
+    //             "resolved": false,
+    //             "icon": "🔑",
+    //             "branches": [],
+    //             "parents": [4]
+    //         },
+    //         {
+    //             "id": 10,
+    //             "name": "Implement User Registration",
+    //             "summary": "Allow new users to sign up and store credentials securely.",
+    //             "optional": false,
+    //             "resolved": false,
+    //             "icon": "📝",
+    //             "branches": [],
+    //             "parents": [4]
+    //         }
+    //     ];
 
-        setTree(dummy);
-        updateGraph(dummy);
-    }
+    //     setTree(dummy);
+    //     updateGraph(dummy);
+    // }
 
     // === Main Function to Update the Graph ===
     async function updateGraph(treeData) {
