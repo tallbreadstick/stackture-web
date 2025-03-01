@@ -107,8 +107,11 @@ function Workspace() {
     function handleKeyPress(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
+            setInput(e.target.value);
             sendMessage();
+            return true
         }
+        return false
     }
 
     function toggleDraggable() {
@@ -616,8 +619,10 @@ function Workspace() {
                             }
                         }}
                         onKeyPress={ (e) => {
-                            setInput(e.target.value);
-                            handleKeyPress(e);
+                            if (!handleKeyPress(e) && e.key && e.key == ' ') {
+                                e.target.value += ' ';
+                                e.preventDefault();
+                            }
                         }}
                         placeholder="Ask something about your workspace..."
                     />
