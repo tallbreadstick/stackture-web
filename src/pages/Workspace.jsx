@@ -508,8 +508,8 @@ function Workspace() {
         // window.addEventListener('keyup', handleKeyUp);
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
-        // getWorkspaceState();
-        makeDummyState();
+        getWorkspaceState();
+        // makeDummyState();
         // console.log(tree);
         const ws = new WebSocket("ws://stackture.eloquenceprojects.org/chat");
         ws.onopen = () => {
