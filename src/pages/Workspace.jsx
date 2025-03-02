@@ -83,17 +83,17 @@ function Workspace() {
 
     function sendMessage() {
         if (!input().trim()) return;
-    
+
         const message = input().trim();
         setMessages([...messages(), { text: message, sender: 'user' }]);
-    
+
         if (socket()) {
             socket().send(message);
         }
-    
+
         setInput('');
     }
-    
+
 
     function handleKeyPress(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -161,108 +161,155 @@ function Workspace() {
 
     // DEBUG FUNCTION TO INITIALIZE DUMMY TREE STATE
     function makeDummyState() {
+        // let dummy = [
+        //     {
+        //         "id": 1,
+        //         "name": "Build a Chat App with PHP & MySQL",
+        //         "summary": "The main problem to solve.",
+        //         "optional": false,
+        //         "resolved": false,
+        //         "icon": "🏆",
+        //         "branches": [2, 3, 4],
+        //         "parents": []
+        //     },
+        //     {
+        //         "id": 2,
+        //         "name": "Set Up Development Environment",
+        //         "summary": "Install necessary tools like PHP, MySQL, and a web server.",
+        //         "optional": false,
+        //         "resolved": false,
+        //         "icon": "🖥",
+        //         "branches": [5, 6],
+        //         "parents": [1]
+        //     },
+        //     {
+        //         "id": 3,
+        //         "name": "Design the Database Schema",
+        //         "summary": "Plan tables for users, messages, and chat rooms.",
+        //         "optional": false,
+        //         "resolved": false,
+        //         "icon": "🗄",
+        //         "branches": [7, 8],
+        //         "parents": [1]
+        //     },
+        //     {
+        //         "id": 4,
+        //         "name": "Set Up User Authentication",
+        //         "summary": "Allow users to register and log in securely.",
+        //         "optional": false,
+        //         "resolved": false,
+        //         "icon": "🔐",
+        //         "branches": [9, 10],
+        //         "parents": [1]
+        //     },
+        //     {
+        //         "id": 5,
+        //         "name": "Install PHP & MySQL",
+        //         "summary": "Ensure PHP, MySQL, and a server like Apache or Nginx are installed.",
+        //         "optional": false,
+        //         "resolved": false,
+        //         "icon": "⚙️",
+        //         "branches": [],
+        //         "parents": [2]
+        //     },
+        //     {
+        //         "id": 6,
+        //         "name": "Set Up Local Dev Server",
+        //         "summary": "Use XAMPP, MAMP, or manual setup to create a development server.",
+        //         "optional": false,
+        //         "resolved": false,
+        //         "icon": "🌍",
+        //         "branches": [],
+        //         "parents": [2]
+        //     },
+        //     {
+        //         "id": 7,
+        //         "name": "Create Users Table",
+        //         "summary": "Define columns for user info like username, email, and password.",
+        //         "optional": false,
+        //         "resolved": false,
+        //         "icon": "👤",
+        //         "branches": [],
+        //         "parents": [3]
+        //     },
+        //     {
+        //         "id": 8,
+        //         "name": "Create Messages Table",
+        //         "summary": "Store messages with sender, receiver, and timestamps.",
+        //         "optional": false,
+        //         "resolved": false,
+        //         "icon": "💬",
+        //         "branches": [],
+        //         "parents": [3]
+        //     },
+        //     {
+        //         "id": 9,
+        //         "name": "Implement Login System",
+        //         "summary": "Handle user sessions and authentication using PHP sessions.",
+        //         "optional": false,
+        //         "resolved": false,
+        //         "icon": "🔑",
+        //         "branches": [],
+        //         "parents": [4]
+        //     },
+        //     {
+        //         "id": 10,
+        //         "name": "Implement User Registration",
+        //         "summary": "Allow new users to sign up and store credentials securely.",
+        //         "optional": false,
+        //         "resolved": false,
+        //         "icon": "📝",
+        //         "branches": [],
+        //         "parents": [4]
+        //     }
+        // ];
+
+        // let dummy = [
+        //     {"id":1,"name":"Complete Bullet-Hell Game with Levels","summary":"Deliver a fully functional bullet-hell game with multiple levels using LibGDX.","optional":false,"resolved":false,"icon":"🏆","branches":[4],"parents":[]},
+        //     {"id":2,"name":"Set Up Development Environment","summary":"Establish the development environment by initializing the project and configuring settings.","optional":false,"resolved":false,"icon":"🛠","branches":[5,6],"parents":[7,8,9,10,11]},
+        //     {"id":3,"name":"Implement Core Game Mechanics","summary":"Develop essential game features—player movement, enemy behavior, collision, and level loading—that cannot begin until the environment is ready.","optional":false,"resolved":false,"icon":"🎮","branches":[7,8,9,10,11],"parents":[12,13]},
+        //     {"id":4,"name":"Deploy, Optimize, and Package the Game","summary":"Finalize the game with performance optimizations and prepare for distribution; this step requires complete core mechanics.","optional":false,"resolved":false,"icon":"🚀","branches":[12,13],"parents":[1]},
+        //     {"id":5,"name":"Initialize LibGDX Project","summary":"Create a new LibGDX project with all necessary dependencies.","optional":false,"resolved":false,"icon":"📂","branches":[],"parents":[2]},
+        //     {"id":6,"name":"Configure Game Window and Settings","summary":"Set up resolution, FPS, and input configurations.","optional":false,"resolved":false,"icon":"🖥","branches":[],"parents":[2]},
+        //     {"id":7,"name":"Implement Player Movement","summary":"Develop responsive controls for player navigation.","optional":false,"resolved":false,"icon":"👾","branches":[2],"parents":[3]},
+        //     {"id":8,"name":"Implement Bullet Patterns and Shooting","summary":"Design and code diverse enemy bullet patterns and player shooting mechanics.","optional":false,"resolved":false,"icon":"🔫","branches":[2],"parents":[3]},
+        //     {"id":9,"name":"Implement Enemy AI","summary":"Develop enemy behavior and spawning logic.","optional":false,"resolved":false,"icon":"🤖","branches":[2],"parents":[3]},
+        //     {"id":10,"name":"Implement Collision Detection and Scoring","summary":"Set up collision systems and score tracking; this is critical for gameplay feedback.","optional":false,"resolved":false,"icon":"💥","branches":[2],"parents":[3]},
+        //     {"id":11,"name":"Implement Level Design and Loading","summary":"Design level layouts and implement level loading mechanisms to support multiple stages.","optional":false,"resolved":false,"icon":"🎨","branches":[2],"parents":[3]},
+        //     {"id":12,"name":"Optimize Performance","summary":"Enhance game performance through code and asset optimizations.","optional":false,"resolved":false,"icon":"⚡","branches":[3],"parents":[4]},
+        //     {"id":13,"name":"Export and Package for Distribution","summary":"Package the game for various platforms and prepare for release.","optional":false,"resolved":false,"icon":"📦","branches":[3],"parents":[4]}
+        // ];
+
+        // let dummy = [
+        //     {"id":1,"name":"Complete Home Server Setup for Family & Business","summary":"Achieve a fully operational home server supporting a business website alongside existing services.","optional":false,"resolved":false,"icon":"🏠","branches":[4],"parents":[]},
+        //     {"id":2,"name":"Set Up Hardware, Network, and OS","summary":"Establish the foundational environment by procuring hardware, configuring the network, and installing a robust server OS.","optional":false,"resolved":false,"icon":"🖥","branches":[5,6,7],"parents":[8,9,10,11]},
+        //     {"id":3,"name":"Implement Business Website","summary":"Develop and deploy a business website with domain acquisition, web design, and coding; these steps require a ready environment.","optional":false,"resolved":false,"icon":"🌐","branches":[8,9,10,11],"parents":[12,13]},
+        //     {"id":4,"name":"Deploy, Secure, and Maintain Home Server","summary":"Finalize server setup by securing, optimizing, and maintaining all services, including the business website.","optional":false,"resolved":false,"icon":"🔒","branches":[12,13],"parents":[1]},
+        //     {"id":5,"name":"Procure Server Hardware","summary":"Purchase energy-efficient hardware suitable for a home server.","optional":false,"resolved":false,"icon":"💻","branches":[],"parents":[2]},
+        //     {"id":6,"name":"Configure Network & Power Backup","summary":"Set up networking equipment, router, and UPS for reliable operation.","optional":false,"resolved":false,"icon":"🌐","branches":[],"parents":[2]},
+        //     {"id":7,"name":"Install and Configure Server OS","summary":"Install a server OS (e.g., Unraid, Proxmox) to manage services effectively.","optional":false,"resolved":false,"icon":"🛠","branches":[],"parents":[2]},
+        //     {"id":8,"name":"Acquire Domain and Hosting","summary":"Obtain a domain name and hosting service for the business website.","optional":false,"resolved":false,"icon":"🔗","branches":[2],"parents":[3]},
+        //     {"id":9,"name":"Learn Web Design Principles","summary":"Study modern web design to create a user-friendly business website.","optional":false,"resolved":false,"icon":"🎨","branches":[2],"parents":[3]},
+        //     {"id":10,"name":"Develop Website Code (HTML/CSS/JS)","summary":"Write and refine website code using HTML, CSS, and JavaScript.","optional":false,"resolved":false,"icon":"💻","branches":[2],"parents":[3]},
+        //     {"id":11,"name":"Deploy Business Website","summary":"Launch the business website on the acquired hosting platform.","optional":false,"resolved":false,"icon":"🚀","branches":[2],"parents":[3]},
+        //     {"id":12,"name":"Optimize and Secure Website","summary":"Enhance website performance and apply robust security measures.","optional":false,"resolved":false,"icon":"⚡","branches":[3],"parents":[4]},
+        //     {"id":13,"name":"Set Up Monitoring and Maintenance Tools","summary":"Implement tools for continuous monitoring and routine maintenance of the website and server.","optional":false,"resolved":false,"icon":"🛠","branches":[3],"parents":[4]}
+        // ];     
+        
         let dummy = [
-            {
-                "id": 1,
-                "name": "Build a Chat App with PHP & MySQL",
-                "summary": "The main problem to solve.",
-                "optional": false,
-                "resolved": false,
-                "icon": "🏆",
-                "branches": [2, 3, 4],
-                "parents": []
-            },
-            {
-                "id": 2,
-                "name": "Set Up Development Environment",
-                "summary": "Install necessary tools like PHP, MySQL, and a web server.",
-                "optional": false,
-                "resolved": false,
-                "icon": "🖥",
-                "branches": [5, 6],
-                "parents": [1]
-            },
-            {
-                "id": 3,
-                "name": "Design the Database Schema",
-                "summary": "Plan tables for users, messages, and chat rooms.",
-                "optional": false,
-                "resolved": false,
-                "icon": "🗄",
-                "branches": [7, 8],
-                "parents": [1]
-            },
-            {
-                "id": 4,
-                "name": "Set Up User Authentication",
-                "summary": "Allow users to register and log in securely.",
-                "optional": false,
-                "resolved": false,
-                "icon": "🔐",
-                "branches": [9, 10],
-                "parents": [1]
-            },
-            {
-                "id": 5,
-                "name": "Install PHP & MySQL",
-                "summary": "Ensure PHP, MySQL, and a server like Apache or Nginx are installed.",
-                "optional": false,
-                "resolved": false,
-                "icon": "⚙️",
-                "branches": [],
-                "parents": [2]
-            },
-            {
-                "id": 6,
-                "name": "Set Up Local Dev Server",
-                "summary": "Use XAMPP, MAMP, or manual setup to create a development server.",
-                "optional": false,
-                "resolved": false,
-                "icon": "🌍",
-                "branches": [],
-                "parents": [2]
-            },
-            {
-                "id": 7,
-                "name": "Create Users Table",
-                "summary": "Define columns for user info like username, email, and password.",
-                "optional": false,
-                "resolved": false,
-                "icon": "👤",
-                "branches": [],
-                "parents": [3]
-            },
-            {
-                "id": 8,
-                "name": "Create Messages Table",
-                "summary": "Store messages with sender, receiver, and timestamps.",
-                "optional": false,
-                "resolved": false,
-                "icon": "💬",
-                "branches": [],
-                "parents": [3]
-            },
-            {
-                "id": 9,
-                "name": "Implement Login System",
-                "summary": "Handle user sessions and authentication using PHP sessions.",
-                "optional": false,
-                "resolved": false,
-                "icon": "🔑",
-                "branches": [],
-                "parents": [4]
-            },
-            {
-                "id": 10,
-                "name": "Implement User Registration",
-                "summary": "Allow new users to sign up and store credentials securely.",
-                "optional": false,
-                "resolved": false,
-                "icon": "📝",
-                "branches": [],
-                "parents": [4]
-            }
-        ];
+            {"id":1,"name":"Master all Learning Requirements","summary":"Balance and complete studies in physics, calculus, networking principles and develop finance software skills for business.","optional":false,"resolved":false,"icon":"🎓","branches":[2,3],"parents":[]},
+            {"id":2,"name":"Complete Academic Studies","summary":"Cover core academic subjects required for computer engineering: physics, calculus, and networking.","optional":false,"resolved":false,"icon":"📘","branches":[4,5,6],"parents":[1]},
+            {"id":3,"name":"Develop Finance Software Skills","summary":"Acquire finance-related knowledge and build a finance software application for business purposes.","optional":false,"resolved":false,"icon":"💼","branches":[10,11,12],"parents":[1]},
+            {"id":4,"name":"Study Physics","summary":"Learn fundamental physics principles that support engineering concepts.","optional":false,"resolved":false,"icon":"🔬","branches":[],"parents":[2]},
+            {"id":5,"name":"Study Calculus","summary":"Master calculus topics essential for problem solving in engineering.","optional":false,"resolved":false,"icon":"∫","branches":[],"parents":[2]},
+            {"id":6,"name":"Study Networking Principles","summary":"Understand key networking concepts including subnetting, error correction/detection, and VLSM.","optional":false,"resolved":false,"icon":"🌐","branches":[7,8,9],"parents":[2]},
+            {"id":7,"name":"Learn Subnetting","summary":"Master subnetting techniques to efficiently segment networks.","optional":false,"resolved":false,"icon":"📡","branches":[],"parents":[6]},
+            {"id":8,"name":"Learn Error Correction and Detection","summary":"Study methods for error correction and detection in data transmission.","optional":false,"resolved":false,"icon":"⚙️","branches":[],"parents":[6]},
+            {"id":9,"name":"Learn VLSM","summary":"Understand Variable Length Subnet Masking for optimal IP address allocation.","optional":false,"resolved":false,"icon":"🛠","branches":[],"parents":[6]},
+            {"id":10,"name":"Study Statistics and Quantitative Models","summary":"Learn key statistical methods and quantitative models used in finance and business.","optional":false,"resolved":false,"icon":"📊","branches":[],"parents":[3]},
+            {"id":11,"name":"Design Finance Software Requirements","summary":"Outline and design requirements for a finance software application.","optional":false,"resolved":false,"icon":"📝","branches":[],"parents":[3]},
+            {"id":12,"name":"Develop Finance Software Application","summary":"Build the finance software application using the acquired quantitative and design knowledge.","optional":false,"resolved":false,"icon":"💻","branches":[],"parents":[3,10,11]}
+        ];          
 
         setTree(dummy);
         updateGraph(dummy);
@@ -427,15 +474,14 @@ function Workspace() {
         return edges;
     }
 
-
     onMount(() => {
         document.title = "Stackture - Workspace";
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
-        getWorkspaceState();
-        // makeDummyState();
+        // getWorkspaceState();
+        makeDummyState();
         console.log(tree);
         const ws = new WebSocket("ws://stackture.eloquenceprojects.org/chat");
         ws.onopen = () => {
@@ -459,9 +505,12 @@ function Workspace() {
                             if ("message" in data) {
                                 setMessages([...messages(), { text: data.message, sender: "ai" }]);
                             }
-                        
+
                             if ("tree_generated" in data && data.tree_generated !== null) {
                                 // render
+                                console.log(data.tree_generated);
+                                setTree(data.tree_generated);
+                                updateGraph(tree);
                             }
                         } catch (error) {
                             console.error("Failed to parse WebSocket message:", error);
@@ -533,18 +582,29 @@ function Workspace() {
                                 transform={`translate(${node.position.x}, ${node.position.y})`}
                                 key={node.id}
                                 onMouseEnter={(e) => {
-                                    if (!tooltip()) {
-                                        const fullNode = unwrap(tree.find(n => n.id == node.id));
-                                        console.log(unwrap(tree));
-                                        console.log(nodes());
-                                        if (fullNode) {
-                                            setTooltip({
-                                                name: fullNode.name,
-                                                summary: fullNode.summary,
-                                                x: e.clientX,
-                                                y: e.clientY
-                                            });
-                                        }
+                                    const fullNode = unwrap(tree.find(n => n.id == node.id));
+                                    console.log(unwrap(tree));
+                                    console.log(nodes());
+                                    if (fullNode) {
+                                        setTooltip({
+                                            name: fullNode.name,
+                                            summary: fullNode.summary,
+                                            x: e.clientX,
+                                            y: e.clientY
+                                        });
+                                    }
+                                }}
+                                onMouseMove={(e) => {
+                                    const fullNode = unwrap(tree.find(n => n.id == node.id));
+                                    console.log(unwrap(tree));
+                                    console.log(nodes());
+                                    if (fullNode) {
+                                        setTooltip({
+                                            name: fullNode.name,
+                                            summary: fullNode.summary,
+                                            x: e.clientX,
+                                            y: e.clientY
+                                        });
                                     }
                                 }}
                                 onMouseLeave={() => setTooltip(null)}>
@@ -606,7 +666,7 @@ function Workspace() {
                                 e.preventDefault();
                             }
                         }}
-                        onKeyPress={ (e) => {
+                        onKeyPress={(e) => {
                             setInput(e.target.value);
                             handleKeyPress(e);
                         }}
