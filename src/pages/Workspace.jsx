@@ -18,12 +18,13 @@ function Workspace() {
     const [tree, setTree] = createStore([]);
     const [nodes, setNodes] = createSignal([]);
     const [edges, setEdges] = createSignal([]);
+    const [messages, setMessages] = createStore([]);
 
     const [socket, setSocket] = createSignal(null);
     const [tooltip, setTooltip] = createSignal(null);
     const [chatOpen, setChatOpen] = createSignal(false);
-    const [messages, setMessages] = createSignal([]);
-    const [input, setInput] = createSignal('');
+    
+    // const [input, setInput] = createSignal('');
     const [isDraggable, setIsDraggable] = createSignal(false);
     const [isDragging, setIsDragging] = createSignal(false);
     const [dragStart, setDragStart] = createSignal({ x: 0, y: 0 });
@@ -78,7 +79,6 @@ function Workspace() {
                 }
                 setTree(data);
                 updateGraph(tree);
-                console.log(data);
             })
             .catch(error => {
                 console.error("Failed to get workspace state:", error);
@@ -91,16 +91,14 @@ function Workspace() {
     }
 
     function sendMessage() {
-        if (!input().trim()) return;
-
-        const message = input().trim();
-        setMessages([...messages(), { text: message, sender: 'user' }]);
-
+        const input = document.querySelector(".chat-input-area textarea");
+        const message = input.value.trim();
+        if (!message) return;
+        setMessages([...messages, { text: message, sender: 'user' }]);
         if (socket()) {
             socket().send(message);
         }
-
-        setInput('');
+        input.value = "";
     }
 
 
@@ -308,20 +306,38 @@ function Workspace() {
         //     {"id":13,"name":"Set Up Monitoring and Maintenance Tools","summary":"Implement tools for continuous monitoring and routine maintenance of the website and server.","optional":false,"resolved":false,"icon":"🛠","branches":[3],"parents":[4]}
         // ];     
         
+        // let dummy = [
+        //     {"id":1,"name":"Master all Learning Requirements","summary":"Balance and complete studies in physics, calculus, networking principles and develop finance software skills for business.","optional":false,"resolved":false,"icon":"🎓","branches":[2,3],"parents":[]},
+        //     {"id":2,"name":"Complete Academic Studies","summary":"Cover core academic subjects required for computer engineering: physics, calculus, and networking.","optional":false,"resolved":false,"icon":"📘","branches":[4,5,6],"parents":[1]},
+        //     {"id":3,"name":"Develop Finance Software Skills","summary":"Acquire finance-related knowledge and build a finance software application for business purposes.","optional":false,"resolved":false,"icon":"💼","branches":[10,11,12],"parents":[1]},
+        //     {"id":4,"name":"Study Physics","summary":"Learn fundamental physics principles that support engineering concepts.","optional":false,"resolved":false,"icon":"🔬","branches":[],"parents":[2]},
+        //     {"id":5,"name":"Study Calculus","summary":"Master calculus topics essential for problem solving in engineering.","optional":false,"resolved":false,"icon":"∫","branches":[],"parents":[2]},
+        //     {"id":6,"name":"Study Networking Principles","summary":"Understand key networking concepts including subnetting, error correction/detection, and VLSM.","optional":false,"resolved":false,"icon":"🌐","branches":[7,8,9],"parents":[2]},
+        //     {"id":7,"name":"Learn Subnetting","summary":"Master subnetting techniques to efficiently segment networks.","optional":false,"resolved":false,"icon":"📡","branches":[],"parents":[6]},
+        //     {"id":8,"name":"Learn Error Correction and Detection","summary":"Study methods for error correction and detection in data transmission.","optional":false,"resolved":false,"icon":"⚙️","branches":[],"parents":[6]},
+        //     {"id":9,"name":"Learn VLSM","summary":"Understand Variable Length Subnet Masking for optimal IP address allocation.","optional":false,"resolved":false,"icon":"🛠","branches":[],"parents":[6]},
+        //     {"id":10,"name":"Study Statistics and Quantitative Models","summary":"Learn key statistical methods and quantitative models used in finance and business.","optional":false,"resolved":false,"icon":"📊","branches":[],"parents":[3]},
+        //     {"id":11,"name":"Design Finance Software Requirements","summary":"Outline and design requirements for a finance software application.","optional":false,"resolved":false,"icon":"📝","branches":[],"parents":[3]},
+        //     {"id":12,"name":"Develop Finance Software Application","summary":"Build the finance software application using the acquired quantitative and design knowledge.","optional":false,"resolved":false,"icon":"💻","branches":[],"parents":[3,10,11]}
+        // ];
+        
         let dummy = [
-            {"id":1,"name":"Master all Learning Requirements","summary":"Balance and complete studies in physics, calculus, networking principles and develop finance software skills for business.","optional":false,"resolved":false,"icon":"🎓","branches":[2,3],"parents":[]},
-            {"id":2,"name":"Complete Academic Studies","summary":"Cover core academic subjects required for computer engineering: physics, calculus, and networking.","optional":false,"resolved":false,"icon":"📘","branches":[4,5,6],"parents":[1]},
-            {"id":3,"name":"Develop Finance Software Skills","summary":"Acquire finance-related knowledge and build a finance software application for business purposes.","optional":false,"resolved":false,"icon":"💼","branches":[10,11,12],"parents":[1]},
-            {"id":4,"name":"Study Physics","summary":"Learn fundamental physics principles that support engineering concepts.","optional":false,"resolved":false,"icon":"🔬","branches":[],"parents":[2]},
-            {"id":5,"name":"Study Calculus","summary":"Master calculus topics essential for problem solving in engineering.","optional":false,"resolved":false,"icon":"∫","branches":[],"parents":[2]},
-            {"id":6,"name":"Study Networking Principles","summary":"Understand key networking concepts including subnetting, error correction/detection, and VLSM.","optional":false,"resolved":false,"icon":"🌐","branches":[7,8,9],"parents":[2]},
-            {"id":7,"name":"Learn Subnetting","summary":"Master subnetting techniques to efficiently segment networks.","optional":false,"resolved":false,"icon":"📡","branches":[],"parents":[6]},
-            {"id":8,"name":"Learn Error Correction and Detection","summary":"Study methods for error correction and detection in data transmission.","optional":false,"resolved":false,"icon":"⚙️","branches":[],"parents":[6]},
-            {"id":9,"name":"Learn VLSM","summary":"Understand Variable Length Subnet Masking for optimal IP address allocation.","optional":false,"resolved":false,"icon":"🛠","branches":[],"parents":[6]},
-            {"id":10,"name":"Study Statistics and Quantitative Models","summary":"Learn key statistical methods and quantitative models used in finance and business.","optional":false,"resolved":false,"icon":"📊","branches":[],"parents":[3]},
-            {"id":11,"name":"Design Finance Software Requirements","summary":"Outline and design requirements for a finance software application.","optional":false,"resolved":false,"icon":"📝","branches":[],"parents":[3]},
-            {"id":12,"name":"Develop Finance Software Application","summary":"Build the finance software application using the acquired quantitative and design knowledge.","optional":false,"resolved":false,"icon":"💻","branches":[],"parents":[3,10,11]}
-        ];          
+            {"id": 1, "name": "Introduction to Mechanical Engineering", "summary": "Overview of the field, its applications, and importance", "icon": "📚", "parents": [], "branches": [2, 3], "optional": false, "resolved": false},
+            {"id": 2, "name": "Foundational Subjects", "summary": "Mathematics, Physics, Chemistry", "icon": "📝", "parents": [1], "branches": [4, 5], "optional": false, "resolved": false},
+            {"id": 3, "name": "Specialized Fields", "summary": "Introduction to various mechanical engineering fields", "icon": "🤖", "parents": [1], "branches": [6, 7], "optional": true, "resolved": false},
+            {"id": 4, "name": "Mathematics for Mechanical Engineering", "summary": "Calculus, Linear Algebra, Differential Equations", "icon": "📐", "parents": [2], "branches": [8, 9], "optional": false, "resolved": false},
+            {"id": 5, "name": "Physics for Mechanical Engineering", "summary": "Mechanics, Thermodynamics, Electromagnetism", "icon": "⚖️", "parents": [2], "branches": [10, 11], "optional": false, "resolved": false},
+            {"id": 6, "name": "Design and Manufacturing", "summary": "Introduction to design principles and manufacturing processes", "icon": "🎨", "parents": [3], "branches": [12, 13], "optional": true, "resolved": false},
+            {"id": 7, "name": "Mechatronics and Robotics", "summary": "Introduction to mechatronics and robotics", "icon": "🤖", "parents": [3], "branches": [14, 15], "optional": true, "resolved": false},
+            {"id": 8, "name": "Calculus", "summary": "Differential Calculus, Integral Calculus", "icon": "∫", "parents": [4], "branches": [], "optional": false, "resolved": false},
+            {"id": 9, "name": "Linear Algebra", "summary": "Vector Spaces, Linear Transformations", "icon": "⬆️", "parents": [4], "branches": [], "optional": false, "resolved": false},
+            {"id": 10, "name": "Mechanics", "summary": "Kinematics, Dynamics, Statics", "icon": "⚙️", "parents": [5], "branches": [], "optional": false, "resolved": false},
+            {"id": 11, "name": "Thermodynamics", "summary": "Laws of Thermodynamics, Thermodynamic Systems", "icon": "🔥", "parents": [5], "branches": [], "optional": false, "resolved": false},
+            {"id": 12, "name": "Design Principles", "summary": "Introduction to design principles and methodologies", "icon": "📋", "parents": [6], "branches": [], "optional": true, "resolved": false},
+            {"id": 13, "name": "Manufacturing Processes", "summary": "Introduction to various manufacturing processes", "icon": "🛠️", "parents": [6], "branches": [], "optional": true, "resolved": false},
+            {"id": 14, "name": "Mechatronics", "summary": "Introduction to mechatronics and its applications", "icon": "🤖", "parents": [7], "branches": [], "optional": true, "resolved": false},
+            {"id": 15, "name": "Robotics", "summary": "Introduction to robotics and its applications", "icon": "🤖", "parents": [7], "branches": [], "optional": true, "resolved": false}
+        ];
 
         setTree(dummy);
         updateGraph(dummy);
@@ -482,19 +498,19 @@ function Workspace() {
         }
 
         dfs(String(rootId));
-        console.log([...document.querySelectorAll("line")]);
+        // console.log([...document.querySelectorAll("line")]);
         return edges;
     }
 
     onMount(() => {
         document.title = "Stackture - Workspace";
-        window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('keyup', handleKeyUp);
+        // window.addEventListener('keydown', handleKeyDown);
+        // window.addEventListener('keyup', handleKeyUp);
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
         // getWorkspaceState();
         makeDummyState();
-        console.log(tree);
+        // console.log(tree);
         const ws = new WebSocket("ws://stackture.eloquenceprojects.org/chat");
         ws.onopen = () => {
             console.log("Connected to WebSocket chat!");
@@ -515,13 +531,13 @@ function Workspace() {
                             const data = JSON.parse(event.data);
 
                             if ("message" in data) {
-                                setMessages([...messages(), { text: data.message, sender: "ai" }]);
+                                setMessages([...messages, { text: data.message, sender: "ai" }]);
                             }
 
-                            if ("tree_generated" in data && data.tree_generated !== null) {
+                            if ("generated_tree" in data && data.generated_tree !== null) {
                                 // render
-                                console.log(data.tree_generated);
-                                setTree(data.tree_generated);
+                                // console.log(data.generateed_tree);
+                                setTree(data.generated_tree);
                                 updateGraph(tree);
                             }
                         } catch (error) {
@@ -544,8 +560,8 @@ function Workspace() {
     });
 
     onCleanup(() => {
-        window.removeEventListener('keydown', handleKeyDown);
-        window.removeEventListener('keyup', handleKeyUp);
+        // window.removeEventListener('keydown', handleKeyDown);
+        // window.removeEventListener('keyup', handleKeyUp);
         window.removeEventListener('mousemove', handleMouseMove);
         window.removeEventListener('mouseup', handleMouseUp);
         if (socket()) {
@@ -577,12 +593,12 @@ function Workspace() {
                     <svg width="100%" height="100%" viewBox={getViewBox()}>
                         {edges().map(edge => (
                             <line
-                                x1={nodes().find(n => n.id === edge.source).position.x + 2}
-                                y1={nodes().find(n => n.id === edge.source).position.y}
-                                x2={nodes().find(n => n.id === edge.target).position.x - 2}
-                                y2={nodes().find(n => n.id === edge.target).position.y}
+                                x1={nodes()?.find(n => n.id === edge.source).position.x + 2}
+                                y1={nodes()?.find(n => n.id === edge.source).position.y}
+                                x2={nodes()?.find(n => n.id === edge.target).position.x - 2}
+                                y2={nodes()?.find(n => n.id === edge.target).position.y}
                                 stroke="#00b1b1"
-                                style="stroke-width:8"
+                                style="stroke-width:4"
                                 strokeLinecap="round"
                                 filter="url(#shadow)"
                                 shapeRendering="geometricPrecision"
@@ -595,8 +611,8 @@ function Workspace() {
                                 key={node.id}
                                 onMouseEnter={(e) => {
                                     const fullNode = unwrap(tree.find(n => n.id == node.id));
-                                    console.log(unwrap(tree));
-                                    console.log(nodes());
+                                    // console.log(unwrap(tree));
+                                    // console.log(nodes());
                                     if (fullNode) {
                                         setTooltip({
                                             name: fullNode.name,
@@ -608,8 +624,6 @@ function Workspace() {
                                 }}
                                 onMouseMove={(e) => {
                                     const fullNode = unwrap(tree.find(n => n.id == node.id));
-                                    console.log(unwrap(tree));
-                                    console.log(nodes());
                                     if (fullNode) {
                                         setTooltip({
                                             name: fullNode.name,
@@ -665,23 +679,31 @@ function Workspace() {
                     <h3>AI Assistant</h3>
                 </div>
                 <div class="chat-messages">
-                    {messages().map((message, index) => (
-                        <div class={`message ${message.sender}`} innerHTML={message.text.split('\n').map(encodeHtml).join('<br>')}></div>
-                    ))}
+                    <For each={messages}>
+                        {(message, index) => (
+                            <div class={`message ${message.sender}`} innerHTML={message.text.split('\n').map(encodeHtml).join('<br>')} />
+                        )}
+                    </For>
                 </div>
                 <div class="chat-input-area">
                     <textarea
-                        value={input()}
-                        onKeyUp={(e) => {
-                            if (e.key && e.key == ' ') {
-                                e.target.value += ' ';
+                        // value={input()}
+                        // onKeyUp={(e) => {
+                        //     if (e.key && e.key == ' ') {
+                        //         e.target.value += ' ';
+                        //         e.preventDefault();
+                        //     }
+                        // }}
+                        // onKeyPress={ (e) => {
+                        //     if (!handleKeyPress(e) && e.key && e.key == ' ') {
+                        //         e.target.value += ' ';
+                        //         e.preventDefault();
+                        //     }
+                        // }}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey) {
                                 e.preventDefault();
-                            }
-                        }}
-                        onKeyPress={ (e) => {
-                            if (!handleKeyPress(e) && e.key && e.key == ' ') {
-                                e.target.value += ' ';
-                                e.preventDefault();
+                                sendMessage();
                             }
                         }}
                         placeholder="Ask something about your workspace..."
