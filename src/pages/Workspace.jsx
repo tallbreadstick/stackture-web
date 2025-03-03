@@ -104,13 +104,10 @@ function Workspace() {
 
 
     function handleKeyPress(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
+        if (e.key.toLowerCase() === 'm' && e.ctrlKey) {
+            toggleDraggable();
             e.preventDefault();
-            setInput(e.target.value);
-            sendMessage();
-            return true
         }
-        return false
     }
 
     function toggleDraggable() {
@@ -294,20 +291,20 @@ function Workspace() {
         //     { "id": 13, "name": "Set Up Monitoring and Maintenance Tools", "summary": "Implement tools for continuous monitoring and routine maintenance of the website and server.", "optional": false, "resolved": false, "icon": "🛠", "branches": [3], "parents": [4] }
         // ];
 
-        // let dummy = [
-        //     {"id":1,"name":"Master all Learning Requirements","summary":"Balance and complete studies in physics, calculus, networking principles and develop finance software skills for business.","optional":false,"resolved":false,"icon":"🎓","branches":[2,3],"parents":[]},
-        //     {"id":2,"name":"Complete Academic Studies","summary":"Cover core academic subjects required for computer engineering: physics, calculus, and networking.","optional":false,"resolved":false,"icon":"📘","branches":[4,5,6],"parents":[1]},
-        //     {"id":3,"name":"Develop Finance Software Skills","summary":"Acquire finance-related knowledge and build a finance software application for business purposes.","optional":false,"resolved":false,"icon":"💼","branches":[10,11,12],"parents":[1]},
-        //     {"id":4,"name":"Study Physics","summary":"Learn fundamental physics principles that support engineering concepts.","optional":false,"resolved":false,"icon":"🔬","branches":[],"parents":[2]},
-        //     {"id":5,"name":"Study Calculus","summary":"Master calculus topics essential for problem solving in engineering.","optional":false,"resolved":false,"icon":"∫","branches":[],"parents":[2]},
-        //     {"id":6,"name":"Study Networking Principles","summary":"Understand key networking concepts including subnetting, error correction/detection, and VLSM.","optional":false,"resolved":false,"icon":"🌐","branches":[7,8,9],"parents":[2]},
-        //     {"id":7,"name":"Learn Subnetting","summary":"Master subnetting techniques to efficiently segment networks.","optional":false,"resolved":false,"icon":"📡","branches":[],"parents":[6]},
-        //     {"id":8,"name":"Learn Error Correction and Detection","summary":"Study methods for error correction and detection in data transmission.","optional":false,"resolved":false,"icon":"⚙️","branches":[],"parents":[6]},
-        //     {"id":9,"name":"Learn VLSM","summary":"Understand Variable Length Subnet Masking for optimal IP address allocation.","optional":false,"resolved":false,"icon":"🛠","branches":[],"parents":[6]},
-        //     {"id":10,"name":"Study Statistics and Quantitative Models","summary":"Learn key statistical methods and quantitative models used in finance and business.","optional":false,"resolved":false,"icon":"📊","branches":[],"parents":[3]},
-        //     {"id":11,"name":"Design Finance Software Requirements","summary":"Outline and design requirements for a finance software application.","optional":false,"resolved":false,"icon":"📝","branches":[],"parents":[3]},
-        //     {"id":12,"name":"Develop Finance Software Application","summary":"Build the finance software application using the acquired quantitative and design knowledge.","optional":false,"resolved":false,"icon":"💻","branches":[],"parents":[3,10,11]}
-        // ];
+        let dummy = [
+            {"id":1,"name":"Master all Learning Requirements","summary":"Balance and complete studies in physics, calculus, networking principles and develop finance software skills for business.","optional":false,"resolved":false,"icon":"🎓","branches":[2,3],"parents":[]},
+            {"id":2,"name":"Complete Academic Studies","summary":"Cover core academic subjects required for computer engineering: physics, calculus, and networking.","optional":false,"resolved":false,"icon":"📘","branches":[4,5,6],"parents":[1]},
+            {"id":3,"name":"Develop Finance Software Skills","summary":"Acquire finance-related knowledge and build a finance software application for business purposes.","optional":false,"resolved":false,"icon":"💼","branches":[10,11,12],"parents":[1]},
+            {"id":4,"name":"Study Physics","summary":"Learn fundamental physics principles that support engineering concepts.","optional":false,"resolved":false,"icon":"🔬","branches":[],"parents":[2]},
+            {"id":5,"name":"Study Calculus","summary":"Master calculus topics essential for problem solving in engineering.","optional":false,"resolved":false,"icon":"∫","branches":[],"parents":[2]},
+            {"id":6,"name":"Study Networking Principles","summary":"Understand key networking concepts including subnetting, error correction/detection, and VLSM.","optional":false,"resolved":false,"icon":"🌐","branches":[7,8,9],"parents":[2]},
+            {"id":7,"name":"Learn Subnetting","summary":"Master subnetting techniques to efficiently segment networks.","optional":false,"resolved":false,"icon":"📡","branches":[],"parents":[6]},
+            {"id":8,"name":"Learn Error Correction and Detection","summary":"Study methods for error correction and detection in data transmission.","optional":false,"resolved":false,"icon":"⚙️","branches":[],"parents":[6]},
+            {"id":9,"name":"Learn VLSM","summary":"Understand Variable Length Subnet Masking for optimal IP address allocation.","optional":false,"resolved":false,"icon":"🛠","branches":[],"parents":[6]},
+            {"id":10,"name":"Study Statistics and Quantitative Models","summary":"Learn key statistical methods and quantitative models used in finance and business.","optional":false,"resolved":false,"icon":"📊","branches":[],"parents":[3]},
+            {"id":11,"name":"Design Finance Software Requirements","summary":"Outline and design requirements for a finance software application.","optional":false,"resolved":false,"icon":"📝","branches":[],"parents":[3]},
+            {"id":12,"name":"Develop Finance Software Application","summary":"Build the finance software application using the acquired quantitative and design knowledge.","optional":false,"resolved":false,"icon":"💻","branches":[],"parents":[3,10,11]}
+        ];
 
         // let dummy = [
         //     { "id": 1, "name": "Introduction to Mechanical Engineering", "summary": "Overview of the field, its applications, and importance", "icon": "📚", "parents": [], "branches": [2, 3], "optional": false, "resolved": false },
@@ -485,17 +482,17 @@ function Workspace() {
         return edges;
     }
 
-
     onMount(() => {
         document.title = "Stackture - Workspace";
         if (user() === null) {
             navigate("/");
         }
+        window.addEventListener('keydown', handleKeyPress);
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
         getWorkspaceState();
         // makeDummyState();
-        // console.log(tree);
+        console.log(tree);
         const ws = new WebSocket("ws://stackture.eloquenceprojects.org/chat");
         ws.onopen = () => {
             console.log("Connected to WebSocket chat!");
@@ -547,8 +544,7 @@ function Workspace() {
     });
 
     onCleanup(() => {
-        // window.removeEventListener('keydown', handleKeyDown);
-        // window.removeEventListener('keyup', handleKeyUp);
+        window.removeEventListener('keydown', handleKeyPress);
         window.removeEventListener('mousemove', handleMouseMove);
         window.removeEventListener('mouseup', handleMouseUp);
         if (socket()) {
@@ -645,7 +641,7 @@ function Workspace() {
                 </div>
             </div>
             <div class="ws-toolbar">
-                <div class={`tool-icon ${isDraggable() ? 'active' : ''}`} onClick={toggleDraggable} title="Toggle Pan Mode {space + hold}">
+                <div class={`tool-icon ${isDraggable() ? 'active' : ''}`} onClick={toggleDraggable} title="Toggle Pan Mode [CTRL + M]">
                     <img src={HandIcon} height="25px" style="filter: brightness(0) invert(1);"></img>
                 </div>
                 <div class="tool-icon">

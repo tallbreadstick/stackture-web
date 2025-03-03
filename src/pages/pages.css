@@ -396,13 +396,6 @@
     }
 }
 
-#workspaces:has(.workspace-card:nth-child(4)) {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
 @keyframes fadeIn {
     from {
         opacity: 0;
