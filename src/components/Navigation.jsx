@@ -1,21 +1,66 @@
 import ProfilePlaceholder from "./../assets/user_profile.webp";
 
-import { user } from "../App";
-import { A } from "@solidjs/router";
+import { logout, user } from "../App";
+import { A, useNavigate } from "@solidjs/router";
+import { createSignal, Match, onCleanup, onMount, Switch } from "solid-js";
 
 function Navigation() {
+
+    let profileMenu;
+
+    const navigate = useNavigate();
+
+    const [profileOpen, setProfileOpen] = createSignal(false);
+
+    function openProfileMenu() {
+        setTimeout(() => setProfileOpen(true), 0);
+    }
+
+    function handleClickOff(e) {
+        console.log(profileMenu);
+        if (!profileMenu?.contains(e.target)) {
+            setProfileOpen(false);
+        }
+    }
+
+    function logOutAndReturn() {
+        logout();
+        navigate("/");
+    }
+
+    onMount(() => {
+        document.addEventListener("click", handleClickOff);
+        document.addEventListener("contextmenu", handleClickOff);
+    });
+
+    onCleanup(() => {
+        document.removeEventListener("click", handleClickOff);
+        document.removeEventListener("contextmenu", handleClickOff);
+    });
+
     return (
         <div class="navigation">
             <A href="/">Home</A>
             <A href="/about">About</A>
             <Show when={user() !== null}>
-                <div class="user-profile">
-                    <div class="user-details">
-                        <label>{user()}</label>
-                        <p>Signed In</p>
-                    </div>
-                    <img src={ProfilePlaceholder} height="30px" />
-                </div>
+                <Switch>
+                    <Match when={!profileOpen()}>
+                        <div class="user-profile" onClick={openProfileMenu}>
+                            <div class="user-details">
+                                <label>{user()}</label>
+                                <p>Signed In</p>
+                            </div>
+                            <img src={ProfilePlaceholder} height="30px" />
+                        </div>
+                    </Match>
+                    <Match when={profileOpen()}>
+                        <div ref={el => (profileMenu = el)} class="profile-menu">
+                            <label>Sign out from <u>{user()}</u>?</label>
+                            <button onClick={logOutAndReturn}>Yes</button>
+                            <button onClick={() => setProfileOpen(false)}>No</button>
+                        </div>
+                    </Match>
+                </Switch>
             </Show>
         </div>
     );

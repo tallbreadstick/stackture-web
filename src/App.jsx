@@ -17,6 +17,7 @@ export function login(username) {
 
 export function logout() {
     localStorage.removeItem("user");
+    localStorage.removeItem("authToken");
     setUser(null);
 }
 

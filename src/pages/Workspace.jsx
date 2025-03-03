@@ -156,19 +156,6 @@ function Workspace() {
         setIsDragging(false);
     }
 
-    function handleKeyDown(e) {
-        if (e.code === 'Space' && !spaceKeyPressed()) {
-            e.preventDefault();
-            setSpaceKeyPressed(true);
-        }
-    }
-
-    function handleKeyUp(e) {
-        if (e.code === 'Space') {
-            setSpaceKeyPressed(false);
-        }
-    }
-
     // DEBUG FUNCTION TO INITIALIZE DUMMY TREE STATE
     function makeDummyState() {
         // let dummy = [
@@ -504,8 +491,6 @@ function Workspace() {
 
     onMount(() => {
         document.title = "Stackture - Workspace";
-        // window.addEventListener('keydown', handleKeyDown);
-        // window.addEventListener('keyup', handleKeyUp);
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
         getWorkspaceState();
