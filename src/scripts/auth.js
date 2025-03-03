@@ -1,3 +1,5 @@
+import { login } from "../App";
+
 export const validateSignup = (username, email, password, confirmPassword) => {
     const errors = {
         username: '',
@@ -93,6 +95,7 @@ export const handleLogin = async (username, password, setErrors, navigate, toast
                 return false;
             } else if (data.token) {
                 localStorage.setItem("authToken", data.token);
+                login(username);
                 navigate("/dashboard");
                 toast.success("Successfully logged in");
                 return true;
