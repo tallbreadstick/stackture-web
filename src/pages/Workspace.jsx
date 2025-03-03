@@ -4,7 +4,7 @@ import HandIcon from "./../assets/hand_icon.svg";
 import "./pages.css";
 import { createStore, unwrap } from "solid-js/store";
 import toast from "solid-toast";
-import { logout } from "../App";
+import { logout, user } from "../App";
 import { useNavigate } from "@solidjs/router";
 import ELK from "elkjs/lib/elk.bundled.js";
 import Tooltip from "../menus/Tooltip";
@@ -93,6 +93,7 @@ function Workspace() {
     function sendMessage() {
         const input = document.querySelector(".chat-input-area textarea");
         const message = input.value.trim();
+        if (messages.length > 0 && messages[messages.length - 1].sender === "user") return;
         if (!message) return;
         setMessages([...messages, { text: message, sender: 'user' }]);
         if (socket()) {
@@ -487,6 +488,9 @@ function Workspace() {
 
     onMount(() => {
         document.title = "Stackture - Workspace";
+        if (user() === null) {
+            navigate("/");
+        }
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
         getWorkspaceState();
@@ -513,6 +517,8 @@ function Workspace() {
 
                             if ("message" in data) {
                                 setMessages([...messages, { text: data.message, sender: "ai" }]);
+                                const msgs = document.querySelector(".chat-messages");
+                                msgs.scrollTop = msgs.scrollHeight + 10;
                             }
 
                             if ("generated_tree" in data && data.generated_tree !== null) {
@@ -592,8 +598,6 @@ function Workspace() {
                                 key={node.id}
                                 onMouseEnter={(e) => {
                                     const fullNode = unwrap(tree.find(n => n.id == node.id));
-                                    // console.log(unwrap(tree));
-                                    // console.log(nodes());
                                     if (fullNode) {
                                         setTooltip({
                                             name: fullNode.name,
@@ -668,21 +672,10 @@ function Workspace() {
                 </div>
                 <div class="chat-input-area">
                     <textarea
-                        // value={input()}
-                        // onKeyUp={(e) => {
-                        //     if (e.key && e.key == ' ') {
-                        //         e.target.value += ' ';
-                        //         e.preventDefault();
-                        //     }
-                        // }}
-                        // onKeyPress={ (e) => {
-                        //     if (!handleKeyPress(e) && e.key && e.key == ' ') {
-                        //         e.target.value += ' ';
-                        //         e.preventDefault();
-                        //     }
-                        // }}
                         onKeyDown={(e) => {
                             if (e.key === "Enter" && !e.shiftKey) {
+                                const messages = document.querySelector(".chat-messages");
+                                messages.scrollTop = messages.scrollHeight + 10;
                                 e.preventDefault();
                                 sendMessage();
                             }
