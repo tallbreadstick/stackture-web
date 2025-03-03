@@ -7,6 +7,7 @@ function WorkspaceCard(props) {
     const navigate = useNavigate();
 
     function navigateToWorkspace() {
+        localStorage.setItem("workspace", props.id);
         navigate("/workspace");
     }
 

@@ -113,8 +113,9 @@ function Dashboard() {
 
     function visitWorkspace(index) {
         const workspace_id = workspaces[index].id;
-        localStorage.setItem("workspace", workspace_id);
-        navigate("/workspace");
+        console.log(workspace_id);
+        // localStorage.setItem("workspace", workspace_id);
+        // navigate("/workspace");
     }
 
     function openCreate() {
@@ -156,7 +157,7 @@ function Dashboard() {
                     </Show>
                     <For each={workspaces}>
                         {(item, index) => (
-                            <WorkspaceCard title={item.title} description={item.description} onClick={() => visitWorkspace(index())} />
+                            <WorkspaceCard title={item.title} description={item.description} id={item.id} />
                         )}
                     </For>
                     {/* <WorkspaceCard
