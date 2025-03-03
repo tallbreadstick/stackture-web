@@ -77,28 +77,27 @@ export const handleLogin = async (username, password, setErrors, navigate, toast
                 body: JSON.stringify({ username, password })
             });
 
-            const data = await response.json();
-
-            if (data.error) {
-                switch(data.error) {
-                    case "InvalidCredentials":
-                        setErrors(prev => ({...prev, password: "Invalid username or password"}));
-                        break;
-                    case "InvalidRequest":
-                        toast.error("Invalid request format");
-                        break;
-                    case "TokenCreationFailed":
-                    case "DatabaseOperationFailed":
-                    default:
-                        toast.error("Login failed. Please try again later.");
-                }
-                return false;
-            } else if (data.token) {
-                localStorage.setItem("authToken", data.token);
-                login(username);
-                navigate("/dashboard");
-                toast.success("Successfully logged in");
-                return true;
+            switch (response.status) {
+                case 401:
+                    setErrors(prev => ({...prev, password: "Invalid username or password"}));
+                    return false;
+                case 500:
+                    toast.error("Internal server error. Please try again later.");
+                    return false;
+                case 200:
+                    const data = await response.json();
+                    if (data.token) {
+                        localStorage.setItem("authToken", data.token);
+                        login(username);
+                        navigate("/dashboard");
+                        toast.success("Successfully logged in!");
+                        return true;
+                    } else {
+                        return false;
+                    }
+                default:
+                    toast.error("Unknown status.");
+                    return false;
             }
         } catch (error) {
             console.error("Login error:", error);
@@ -124,21 +123,26 @@ export const handleSignup = async (username, email, password, confirmPassword, s
                 body: JSON.stringify({ username, email, password })
             });
 
-            if (response.status === 200) {
-                const data = await response.json();
-                if (data.token) {
-                    localStorage.setItem("authToken", data.token);
-                    toast.success("Successfully registered!");
-                    closeAuth();
-                    navigate("/dashboard");
-                    return true;
-                } else {
-                    toast.error("Registration successful but no token received");
+            switch (response.status) {
+                case 409:
+                    setErrors(prev => ({...prev, email: "Username or email already exists!"}));
                     return false;
-                }
-            } else {
-                const data = await response.json();
-                throw new Error(data.error || `Error: ${response.status}`);
+                case 500:
+                    toast.error("Internal server error. Please try again later.");
+                    return false;
+                case 200:
+                    const data = await response.json();
+                    if (data.token) {
+                        localStorage.setItem("authToken", data.token);
+                        toast.success("Successfully registered!");
+                        closeAuth();
+                        navigate("/dashboard");
+                        return true;
+                    } else {
+                        toast.error("Registration successful but no token received");
+                        return false;
+                    }
+                    return true;
             }
         } catch (error) {
             console.error("Registration error:", error.message);
