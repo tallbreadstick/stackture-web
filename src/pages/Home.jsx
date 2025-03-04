@@ -5,12 +5,18 @@ import toast from "solid-toast";
 import { createSignal, onMount, Switch } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { handleLogin, handleSignup } from "../scripts/auth";
-import { login, setUser } from "../App";
+import { login, user } from "../App";
 import "./pages.css";
+import "../assets/tailwind.css";
 
 function Home() {
 
     const navigate = useNavigate();
+
+    if (user() !== null) {
+        navigate("/dashboard");
+        return;
+    }
 
     const [pageState, setPageState] = createSignal(null);
     const [username, setUsername] = createSignal('');
@@ -68,6 +74,11 @@ function Home() {
                         <h2>Engage in focused learning sessions.</h2>
                         <h2>Design structured and precise study plans.</h2>
                         <h2>Divide. Conquer. Repeat.</h2>
+                        <button 
+                            onClick={() => {navigate("/about")}} 
+                            class="py-2 px-5 rounded-2xl bg-[#070640] text-white font-semibold border border-solid border-black hover:border-[#4842E5] hover:bg-[#0A085B] transition-colors">
+                                About us
+                        </button>
                     </div>
                 </div>
                 <div class="title-space">
@@ -93,6 +104,7 @@ function Home() {
                                     placeholder="Username"
                                     value={username()}
                                     onInput={(e) => setUsername(e.target.value)} 
+                                    class="rounded !p-2"
                                 />
                                 {errors().username && <label class="error">{errors().username}</label>}
                                 <input 
@@ -100,6 +112,7 @@ function Home() {
                                     placeholder="Password"
                                     value={password()}
                                     onInput={(e) => setPassword(e.target.value)}
+                                    class="rounded !p-2"
                                 />
                                 {errors().password && <label class="error">{errors().password}</label>}
                                 <button onClick={onLoginSubmit}>Submit</button>
@@ -116,6 +129,7 @@ function Home() {
                                     placeholder="Username"
                                     value={username()}
                                     onInput={(e) => setUsername(e.target.value)}
+                                    class="rounded !p-2"
                                 />
                                 {errors().username && <label class="error">{errors().username}</label>}
                                 <input 
@@ -123,6 +137,7 @@ function Home() {
                                     placeholder="Email"
                                     value={email()}
                                     onInput={(e) => setEmail(e.target.value)}
+                                    class="rounded !p-2"
                                 />
                                 {errors().email && <label class="error">{errors().email}</label>}
                                 <input 
@@ -130,6 +145,7 @@ function Home() {
                                     placeholder="Password"
                                     value={password()}
                                     onInput={(e) => setPassword(e.target.value)}
+                                    class="rounded !p-2"
                                 />
                                 {errors().password && <label class="error">{errors().password}</label>}
                                 <input 
@@ -137,6 +153,7 @@ function Home() {
                                     placeholder="Confirm Password"
                                     value={confirmPassword()}
                                     onInput={(e) => setConfirmPassword(e.target.value)}
+                                    class="rounded !p-2"
                                 />
                                 {errors().confirmPassword && <label class="error">{errors().confirmPassword}</label>}
                                 <button onClick={onSignupSubmit}>Submit</button>

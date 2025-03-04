@@ -3,6 +3,7 @@ import ProfilePlaceholder from "./../assets/user_profile.webp";
 import { logout, user } from "../App";
 import { A, useNavigate } from "@solidjs/router";
 import { createSignal, Match, onCleanup, onMount, Switch } from "solid-js";
+import "../assets/font-awesome/css/font-awesome.min.css";
 
 function Navigation() {
 
@@ -40,8 +41,8 @@ function Navigation() {
 
     return (
         <div class="navigation">
-            <A href="/">Home</A>
-            <A href="/about">About</A>
+            <A href={user() !== null ? "/dashboard" : "/"}><i class="fa fa-home" aria-hidden="true"></i> Home</A>
+            <A href="/about"><i class="fa fa-info-circle" aria-hidden="true"></i> About</A>
             <Show when={user() !== null}>
                 <Switch>
                     <Match when={!profileOpen()}>
@@ -50,7 +51,7 @@ function Navigation() {
                                 <label>{user()}</label>
                                 <p>Signed In</p>
                             </div>
-                            <img src={ProfilePlaceholder} height="30px" />
+                            <img src={ProfilePlaceholder} class="rounded-3xl" height="35px" />
                         </div>
                     </Match>
                     <Match when={profileOpen()}>

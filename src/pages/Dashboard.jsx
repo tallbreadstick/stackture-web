@@ -1,20 +1,22 @@
 import { createSignal, onMount, Show } from "solid-js";
 import Navigation from "../components/Navigation";
 import "./pages.css";
+import "../assets/tailwind.css";
 import WorkspaceCard from "../components/WorkspaceCard";
 import AddIcon from "./../assets/add.svg";
 import LoadingAnimation from "./../assets/loading.gif";
 import { createStore } from "solid-js/store";
 import toast from "solid-toast";
 import { useNavigate } from "@solidjs/router";
-import { logout } from "../App";
+import { logout, sessionTimeout } from "../App";
 import TextPrompt from "../menus/TextPrompt";
+
+export const [workspaces, setWorkspaces] = createStore([]);
 
 function Dashboard() {
 
     const navigate = useNavigate();
     const [creating, setCreating] = createSignal(false);
-    const [workspaces, setWorkspaces] = createStore([]);
 
     function fetchWorkspaces() {
         const token = localStorage.getItem("authToken");
@@ -40,7 +42,7 @@ function Dashboard() {
             }
             if (!response.ok) {
                 if (data.error === "TokenExpired") {
-                    toast.error("Failed to fetch workspaces");
+                    sessionTimeout()
                     return;
                 }
                 throw new Error(data.error || `Error: ${response.status}`);
@@ -67,9 +69,7 @@ function Dashboard() {
             return;
         }
         if (!token) {
-            toast.error("Unauthorized Action. Please sign in.");
-            logout();
-            navigate("/");
+            sessionTimeout()
             return;
         }
         fetch("http://stackture.eloquenceprojects.org/api/workspace/create", {
@@ -94,7 +94,7 @@ function Dashboard() {
             }
             if (!response.ok) {
                 if (data.error === "TokenExpired") {
-                    toast.error("Expired token. Please log in.");
+                    sessionTimeout()
                     return;
                 }
                 throw new Error(data.error || `Error: ${response.status}`);
@@ -146,14 +146,19 @@ function Dashboard() {
                 <h1>Workspaces</h1>
                 <h3>These are isolated spaces where you can have study sessions.</h3>
                 <div id="workspaces">
-                    <div class="workspace-card" onClick={openCreate}>
-                        <div class="new-card">
-                            <img src={AddIcon} width="30px" />
-                            <label>New Workspace</label>
+                    <Show when={workspaces !== null}>
+                        <div class="workspace-card" onClick={openCreate}>
+                            <div class="new-card">
+                                <img src={AddIcon} width="30px" />
+                                <label>New Workspace</label>
+                            </div>
                         </div>
-                    </div>
-                    <Show when={workspaces === null || workspaces.length === 0}>
-                        <img src={LoadingAnimation} width="200px" />
+                    </Show>
+                    <Show when={workspaces === null}>
+                        <div class="mx-auto col-span-4 mt-20 flex gap-5 justify-center items-center text-xl text-white font-bold">
+                            <img src={Loadingnimation} width="50px" />
+                            Fetching Workspaces . .  .
+                        </div>
                     </Show>
                     <For each={workspaces}>
                         {(item, index) => (

@@ -21,6 +21,12 @@ export function logout() {
     setUser(null);
 }
 
+export function sessionTimeout() {
+    toast.error("Session Timed out");
+    logout();
+    navigate("/");
+}
+
 const Home = lazy(() => import("./pages/Home"));
 const About  = lazy(() => import("./pages/About"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
