@@ -679,7 +679,7 @@ function Workspace() {
                         placeholder="Ask something about your workspace..."
                     />
                     <button onClick={sendMessage}>
-                        <i class="fas fa-paper-plane"></i>
+                        <i class="fa fa-paper-plane"></i>
                     </button>
                 </div>
             </div>
