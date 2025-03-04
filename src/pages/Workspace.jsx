@@ -30,6 +30,10 @@ function Workspace() {
     const [dragStart, setDragStart] = createSignal({ x: 0, y: 0 });
     const [canvasPosition, setCanvasPosition] = createSignal({ x: 0, y: 0 });
     const [spaceKeyPressed, setSpaceKeyPressed] = createSignal(false);
+    const [zoomLevel, setZoomLevel] = createSignal(1); // 1 = 100% (default zoom)
+    const [showZoomIndicator, setShowZoomIndicator] = createSignal(false);
+    const [zoomIndicatorPosition, setZoomIndicatorPosition] = createSignal({ x: 0, y: 0 });
+    const [zoomIndicatorTimeout, setZoomIndicatorTimeout] = createSignal(null);
 
     function encodeHtml(text) {
         return text
@@ -114,44 +118,114 @@ function Workspace() {
         setIsDraggable(!isDraggable());
     }
 
-    function handleMouseDown(e) {
-        if (isDraggable() || spaceKeyPressed()) {
-            setIsDragging(true);
-            setDragStart({ x: e.clientX, y: e.clientY });
+    function zoomIn() {
+        setZoomLevel(prev => Math.min(prev + 0.1, 3));
+        showZoomIndicatorNearCursor();
+    }
+    
+    function zoomOut() {
+        setZoomLevel(prev => Math.max(prev - 0.1, 0.3)); 
+        showZoomIndicatorNearCursor();
+    }
+    
+    function handleWheel(e) {
+        if (e.ctrlKey) {
+            e.preventDefault(); 
+            
+            if (e.deltaY < 0) {
+                zoomIn();
+            } else {
+                zoomOut();
+            }
+            
+            setZoomIndicatorPosition({ x: e.clientX + 20, y: e.clientY - 20 });
         }
+    }
+
+    function showZoomIndicatorNearCursor() {
+        if (zoomIndicatorPosition().x === 0 && zoomIndicatorPosition().y === 0) {
+            const mouseEvent = window.event;
+            if (mouseEvent) {
+                setZoomIndicatorPosition({ x: mouseEvent.clientX + 20, y: mouseEvent.clientY - 20 });
+            }
+        }
+        
+        setShowZoomIndicator(true);
+        
+        if (zoomIndicatorTimeout()) {
+            clearTimeout(zoomIndicatorTimeout());
+        }
+        
+        const timeout = setTimeout(() => {
+            setShowZoomIndicator(false);
+        }, 2000);
+        
+        setZoomIndicatorTimeout(timeout);
     }
 
     function handleMouseMove(e) {
         if (isDragging()) {
             const deltaX = e.clientX - dragStart().x;
             const deltaY = e.clientY - dragStart().y;
-
+    
             const currentX = canvasPosition().x;
             const currentY = canvasPosition().y;
-
+    
             let newX = currentX + deltaX;
             let newY = currentY + deltaY;
-
+    
             const gridRect = gridContainerRef.getBoundingClientRect();
             const canvasRect = gridContainerRef.parentElement.getBoundingClientRect();
-
-            const extraWidth = (gridRect.width - canvasRect.width) / 2;
-            const extraHeight = (gridRect.height - canvasRect.height) / 2;
-
-            const minX = -extraWidth;
-            const maxX = extraWidth;
-            const minY = -extraHeight;
-            const maxY = extraHeight;
-
+            
+            // Account for zoom in constraint calculations
+            const currentZoom = zoomLevel();
+            
+            // Calculate the actual dimensions accounting for zoom
+            // When zoomed in, the effective grid is larger relative to the viewport
+            const effectiveGridWidth = gridRect.width / currentZoom;
+            const effectiveGridHeight = gridRect.height / currentZoom;
+            
+            // Calculate the extra space beyond the viewport in each direction
+            const extraWidth = (effectiveGridWidth - canvasRect.width) / 2;
+            const extraHeight = (effectiveGridHeight - canvasRect.height) / 8;
+            
+            // Debug logs to see what's happening
+            console.log({
+                gridHeight: gridRect.height,
+                effectiveGridHeight: effectiveGridHeight,
+                canvasHeight: canvasRect.height,
+                extraHeight: extraHeight,
+                currentY: currentY,
+                newY: newY,
+                minY: -extraHeight,
+                maxY: extraHeight
+            });
+            
+            // Apply constraints with the adjusted dimensions
+            const minX = -extraWidth;  // Left boundary
+            const maxX = extraWidth;   // Right boundary
+            const minY = -extraHeight; // Top boundary - this was the issue
+            const maxY = extraHeight;  // Bottom boundary
+            
+            // Force constraints
             newX = Math.max(minX, Math.min(newX, maxX));
             newY = Math.max(minY, Math.min(newY, maxY));
-
+    
             setCanvasPosition({ x: newX, y: newY });
             setDragStart({ x: e.clientX, y: e.clientY });
         }
     }
+
+
     function handleMouseUp() {
         setIsDragging(false);
+    }
+
+    function handleMouseDown(e) {
+        if (isDraggable() || spaceKeyPressed()) {
+            setIsDragging(true);
+            setDragStart({ x: e.clientX, y: e.clientY });
+        }
     }
 
     // DEBUG FUNCTION TO INITIALIZE DUMMY TREE STATE
@@ -417,26 +491,28 @@ function Workspace() {
 
     // === New Version: Adjust Node Positions Using Subtree Grouping with Shared-Parent Handling ===
     function adjustNodePositions(treeData, rootNode) {
-        const canvas = document.querySelector(".grid-container");
-        const canvasWidth = canvas ? canvas.offsetWidth : 800;
-        const rootOffsetY = 200;
-        const spacing = 25;
-        const levelSpacing = 150;
+    // Use window width instead of grid-container width, since grid-container is 200%
+    const windowWidth = window.innerWidth;
+    const rootOffsetY = 200;
+    const spacing = 25;
+    const levelSpacing = 150;
 
-        // Compute total width of the tree from the root
-        const totalWidth = computeSubtreeWidthUnique(rootNode, treeData, spacing);
-        // Center the tree within the canvas
-        const xStart = (canvasWidth - totalWidth) / 2;
-        const positions = assignPositions(rootNode, treeData, xStart, rootOffsetY, levelSpacing, spacing);
+    // Compute total width of the tree from the root
+    const totalWidth = computeSubtreeWidthUnique(rootNode, treeData, spacing);
+    
+    // Center the tree within the window (not the grid-container)
+    const xStart = (windowWidth / 2) - (totalWidth / 2);
+    
+    // Pass the centered starting position to assignPositions
+    const positions = assignPositions(rootNode, treeData, xStart, rootOffsetY, levelSpacing, spacing);
 
-        // Map each treeData node to our updated node definition
-        return treeData.map(node => {
-            const pos = positions[node.id] ? { x: positions[node.id].x, y: positions[node.id].y } : { x: 0, y: rootOffsetY };
-            const label = node.icon || node.name || node.id;
-            return {
-                id: String(node.id),
-                position: pos,
-                data: { label },
+    return treeData.map(node => {
+        const pos = positions[node.id] ? { x: positions[node.id].x, y: positions[node.id].y } : { x: windowWidth / 2, y: rootOffsetY };
+        const label = node.icon || node.name || node.id;
+        return {
+            id: String(node.id),
+            position: pos,
+            data: { label },
                 style: {
                     width: 60,
                     height: 60,
@@ -598,6 +674,10 @@ function Workspace() {
         window.addEventListener('keydown', handleKeyPress);
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
+        const canvas = document.querySelector('.ws-canvas');
+        if (canvas) {
+            canvas.addEventListener('wheel', handleWheel, { passive: false });
+        }
         getWorkspaceState();
         fetchMessages();
         // makeDummyState();
@@ -608,6 +688,13 @@ function Workspace() {
         window.removeEventListener('keydown', handleKeyPress);
         window.removeEventListener('mousemove', handleMouseMove);
         window.removeEventListener('mouseup', handleMouseUp);
+        const canvas = document.querySelector('.ws-canvas');
+        if (zoomIndicatorTimeout()) {
+            clearTimeout(zoomIndicatorTimeout());
+        }
+        if (canvas) {
+            canvas.removeEventListener('wheel', handleWheel);
+        }
         if (socket()) {
             socket().close();
         }
@@ -632,7 +719,7 @@ function Workspace() {
                 <div
                     class="grid-container"
                     ref={gridContainerRef}
-                    style={`transform: translate(${canvasPosition().x}px, ${canvasPosition().y}px)`}
+                    style={`transform: translate(${canvasPosition().x}px, ${canvasPosition().y}px) scale(${zoomLevel()}); transform-origin: center center;`}
                 >
                     <svg width="100%" height="100%" viewBox={getViewBox()}>
                         {edges().map(edge => (
@@ -705,9 +792,11 @@ function Workspace() {
                 <div class={`tool-icon ${isDraggable() ? 'active' : ''}`} onClick={toggleDraggable} title="Toggle Pan Mode [CTRL + M]">
                     <img src={HandIcon} height="25px" style="filter: brightness(0) invert(1);"></img>
                 </div>
-                <div class="tool-icon">
+                <div class="tool-icon" onClick={zoomOut} title="Zoom Out [CTRL + Mouse Wheel Down]">
+                    <i class="fa fa-search-minus" style="color: white; font-size: 20px;"></i>
                 </div>
-                <div class="tool-icon">
+                <div class="tool-icon" onClick={zoomIn} title="Zoom In [CTRL + Mouse Wheel Up]">
+                    <i class="fa fa-search-plus" style="color: white; font-size: 20px;"></i>
                 </div>
                 <div class="tool-icon">
                 </div>
@@ -750,6 +839,14 @@ function Workspace() {
                     summary={tooltip().summary}
                     x={tooltip().x}
                     y={tooltip().y} />
+            </Show>
+            <Show when={showZoomIndicator()}>
+                <div 
+                    class="zoom-indicator-popup" 
+                    style={`left: ${zoomIndicatorPosition().x}px; top: ${zoomIndicatorPosition().y}px;`}
+                >
+                    {Math.round(zoomLevel() * 100)}%
+                </div>
             </Show>
         </div>
     );

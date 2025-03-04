@@ -495,6 +495,11 @@
     }
 }
 
+.zoom-indicator {
+    font-family: 'Varela Round', sans-serif;
+    font-size: 0.9rem;
+}
+
 .ws-chat {
     position: absolute;
     bottom: 60px; 
@@ -778,6 +783,25 @@
 
 #about-page .principle-item.closer-itemright {
     margin-left: -30px;
+}
+
+.zoom-indicator-popup {
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-family: 'Varela Round', sans-serif;
+    font-size: 0.9rem;
+    z-index: 1000;
+    pointer-events: none;
+    animation: fadeInOut 2s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    10%, 80% { opacity: 1; }
 }
 
 @media (max-width: 768px) {
