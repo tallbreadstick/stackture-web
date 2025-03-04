@@ -40,7 +40,7 @@ function Navigation() {
     });
 
     return (
-        <div class="navigation">
+        <div class="navigation z-10">
             <A href={user() !== null ? "/dashboard" : "/"}><i class="fa fa-home" aria-hidden="true"></i> Home</A>
             <A href="/about"><i class="fa fa-info-circle" aria-hidden="true"></i> About</A>
             <Show when={user() !== null}>

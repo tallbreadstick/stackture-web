@@ -1,5 +1,6 @@
 import { onMount } from "solid-js";
 import "./pages.css";
+import "../assets/tailwind.css";
 import Navigation from "../components/Navigation";
 
 function About() {
@@ -8,9 +9,11 @@ function About() {
     });
 
     return (
-        <div id="about-page" class="page">
-            <Navigation />
-            <div class="page-content">
+        <>
+        <Navigation />
+        <div id="about-page" class="page absolute top-0">
+            <img src="/src/assets/about.jpeg" class="fixed top-0 left-0 w-screen h-screen -z-[1]" />
+            <div class="page-content !pt-28 !bg-[#05042c] !bg-opacity-80">
                 <div class="introduction-space">
                     <h1>About Stackture</h1>
                     <h3>Breaking Down Complex Problems Into Manageable Solutions</h3>
@@ -34,7 +37,8 @@ function About() {
                         <p class="caption">Stackture's hierarchical problem-solving approach</p>
                     </div>
                 </div>
-                
+            </div>
+            <div class="page-content pt-9 !bg-gradient-to-b !from-transparent !to-[#05042c]">
                 <div class="principles-section">
                     <h2>Our Core Principles</h2>
                     <div class="principles-container">
@@ -50,11 +54,11 @@ function About() {
                             <h4>Mastery Before Progression</h4>
                             <p>You can't move up until you've truly understood what's below. Stackture enforces a post-order resolution (learn subproblems before the main problem).</p>
                         </div>
-                        <div class="principle-item closer-itemleft">
+                        <div class="principle-item">
                             <h4>Human-AI Synergy</h4>
                             <p>The AI assists in structuring learning but doesn't replace the user's own problem-solving ability. Users must engage deeply, not just passively consume AI-generated content.</p>
                         </div>
-                        <div class="principle-item closer-itemright">
+                        <div class="principle-item">
                             <h4>Long-Term Impact Over Trends</h4>
                             <p>No gimmicks, no temporary hype. Stackture is built with sustainability in mind, meaning features should be robust, thoughtful, and enduring.</p>
                         </div>
@@ -85,6 +89,7 @@ function About() {
                 </div>
             </div>
         </div>
+        </>
     );
 }
 

@@ -48,7 +48,11 @@
     box-sizing: border-box;
     display: flex;
     gap: 40px;
-    background: linear-gradient(to bottom, teal, #006262, #003939);
+    background-color: rgba(0, 0, 0, 0.7);
+    border-bottom: #19042C solid 2px;
+    position: fixed;
+    top: 0;
+    backdrop-filter: blur(16px);
     a {
         font-family: 'Sigmar';
         font-size: 1.2rem;
@@ -263,10 +267,18 @@
 }
 
 #dashboard-page .page-content {
-    background-color: #05042c;
+    /* background-color: #05042c; */
+    background: url("/src/assets/Vector.png"),
+        radial-gradient(
+        43.16% 43.16% at 90.83% 86.02%,
+        rgba(24, 16, 255, 0.2) 0%,
+        rgba(0, 98, 98, 0.1) 100%
+        ),
+        linear-gradient(180deg, #05042c 0%, #000 100%) no-repeat;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-top: 3.5rem;
     h1 {
         font-family: 'Lilita One';
         font-size: 3rem;

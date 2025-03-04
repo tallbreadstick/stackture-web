@@ -66,8 +66,9 @@ function Home() {
     });
 
     return (
-        <div id="home-page" class="page">
-            <Navigation />
+        <>
+        <Navigation />
+        <div id="home-page" class="page absolute top-0">
             <div class="page-content">
                 <div class="description-space">
                     <div class="description-box">
@@ -163,6 +164,7 @@ function Home() {
                 </div>
             </div>
         </div>
+        </>
     );
 }
 
