@@ -625,3 +625,181 @@
     font-family: 'Lilita One';
     font-size: 1.5rem;
 }
+
+#about-page .page-content {
+    padding: 40px 10%;
+    margin: 0 auto;
+    background-color: #05042c;
+}
+
+#about-page .introduction-space {
+    margin-bottom: 60px;
+    text-align: center;
+}
+
+#about-page h2 {
+    font-family: 'Lilita One', sans-serif;
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+#about-page h3 {
+    margin-top: 10px;
+    color: #c4c4ff;
+}
+
+#about-page .content-container {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 60px;
+    align-items: center;
+}
+
+#about-page .description-space ul {
+    font-family: 'Kanit', sans-serif;
+    color: white;
+    text-align: left;
+    margin-top: 20px;
+    padding-left: 20px;
+}
+
+#about-page .description-space li {
+    margin-bottom: 10px;
+}
+
+#about-page .image-space {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#about-page .image-space img {
+    max-width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+#about-page .caption {
+    font-size: 0.9rem;
+    margin-top: 15px;
+    color: #c4c4ff;
+    text-align: center;
+}
+
+#about-page .tech-section {
+    margin-bottom: 60px;
+    text-align: center;
+}
+
+#about-page .tech-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+#about-page .tech-item {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 10px;
+    width: 30%;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+#about-page .tech-item:hover {
+    transform: translateY(-5px);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#about-page .tech-item h4 {
+    font-family: 'Lilita One', sans-serif;
+    color: #c4c4ff;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+#about-page .team-section {
+    text-align: center;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+#about-page .principles-section {
+    width: 100%;
+    margin: 60px 0;
+    padding: 0 20px;
+    box-sizing: border-box;
+    text-align: center; /* Match tech section's centered text */
+}
+
+#about-page .principles-container {
+    display: flex;  /* Change from grid to flex like tech-container */
+    justify-content: space-around;  /* Like tech-container */
+    flex-wrap: wrap;
+    gap: 20px;  /* Match tech-container gap */
+    margin-top: 30px;
+}
+
+#about-page .principle-item {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 20px;  /* Match tech-item padding */
+    border-radius: 10px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    width: 30%;  /* Match tech-item width */
+    border-left: none;  /* Remove border to match tech-item */
+}
+
+#about-page .principle-item:hover {
+    transform: translateY(-5px);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#about-page .principle-item h4 {
+    font-family: 'Lilita One', sans-serif;
+    color: #c4c4ff;
+    font-size: 1.2rem;
+    margin-bottom: 10px;  /* Match tech-item h4 */
+    text-align: center;  /* Center the titles like tech section */
+}
+
+#about-page .principle-item p {
+    font-family: 'Kanit', sans-serif;
+    color: white;
+    line-height: 1.5;
+    font-size: 1rem;  /* Adjust to match tech-item text */
+    text-align: center;  /* Center the text like tech section */
+}
+
+#about-page .principle-item.closer-itemleft {
+    margin-right: -610px;
+}
+
+#about-page .principle-item.closer-itemright {
+    margin-left: -30px;
+}
+
+@media (max-width: 768px) {
+    #about-page .content-container {
+        flex-direction: column;
+    }
+    
+    #about-page .tech-container {
+        flex-direction: column;
+    }
+    
+    #about-page .tech-item {
+        width: 100%;
+    }
+    
+    #about-page .description-space,
+    #about-page .image-space {
+        width: 100%;
+    }
+
+    #about-page .principles-container {
+        grid-template-columns: 1fr;
+    }
+    
+}
