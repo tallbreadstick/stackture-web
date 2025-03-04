@@ -72,7 +72,7 @@ function Home() {
                 <div class="description-space">
                     <div class="description-box">
                         <h2>Engage in focused learning sessions.</h2>
-                        <h2>Design structured and precise study plans.</h2>
+                        <h2>Design structured and precise strategies.</h2>
                         <h2>Divide. Conquer. Repeat.</h2>
                         <button 
                             onClick={() => {navigate("/about")}} 
