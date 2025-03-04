@@ -93,9 +93,9 @@ function Workspace() {
     function sendMessage() {
         const input = document.querySelector(".chat-input-area textarea");
         const message = input.value.trim();
-        if (messages.length > 0 && messages[messages.length - 1].sender === "user") return;
+        if (messages.length > 0 && messages[messages.length - 1].is_user === true) return;
         if (!message) return;
-        setMessages([...messages, { text: message, sender: 'user' }]);
+        setMessages([...messages, { message: message, is_user: true }]);
         if (socket()) {
             socket().send(message);
         }
@@ -482,45 +482,37 @@ function Workspace() {
         return edges;
     }
 
-    onMount(() => {
-        document.title = "Stackture - Workspace";
-        if (user() === null) {
-            navigate("/");
-        }
-        window.addEventListener('keydown', handleKeyPress);
-        window.addEventListener('mousemove', handleMouseMove);
-        window.addEventListener('mouseup', handleMouseUp);
-        getWorkspaceState();
-        // makeDummyState();
-        console.log(tree);
+    // connection logic
+    const connectWebSocket = () => {
+        
+        toast("Connecting to chat...");
         const ws = new WebSocket("ws://stackture.eloquenceprojects.org/chat");
+    
         ws.onopen = () => {
             console.log("Connected to WebSocket chat!");
+            toast.success("Connected to workspace chat!");
             ws.send(JSON.stringify({
                 workspace_id: parseInt(localStorage.getItem("workspace")),
                 node_id: 0,
                 token: localStorage.getItem("authToken")
-            }))
+            }));
         };
+    
         ws.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-                if (data.status == "error") {
-                    ws.onerror(new Event("Handshake Error"))
+                if (data.status === "error") {
+                    ws.onerror(new Event("Handshake Error"));
                 } else {
                     ws.onmessage = (event) => {
                         try {
                             const data = JSON.parse(event.data);
-
                             if ("message" in data) {
-                                setMessages([...messages, { text: data.message, sender: "ai" }]);
+                                setMessages([...messages, { message: data.message, is_user: false }]);
                                 const msgs = document.querySelector(".chat-messages");
-                                msgs.scrollTop = msgs.scrollHeight + 10;
+                                msgs.scrollTop = msgs.scrollHeight - 10;
                             }
-
                             if ("generated_tree" in data && data.generated_tree !== null) {
-                                // render
-                                // console.log(data.generateed_tree);
                                 setTree(data.generated_tree);
                                 updateGraph(tree);
                             }
@@ -533,14 +525,83 @@ function Workspace() {
                 console.error("Failed to parse WebSocket message:", error);
             }
         };
+    
         ws.onerror = (error) => {
             console.error("WebSocket error:", error);
             toast.error("Chat connection error.");
         };
+    
         ws.onclose = () => {
-            console.log("Chat WebSocket closed.");
+            console.warn("Connection closed. Attempting to reconnect...");
+    
+            setTimeout(() => {
+                connectWebSocket(); // Retry connection
+            }, 5000); // Exponential backoff
         };
+    
         setSocket(ws);
+    };
+
+    function fetchMessages() {
+        const workspace_id = localStorage.getItem("workspace");
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+            toast.error("Unauthorized Action. Please sign in.");
+            logout();
+            navigate("/");
+            return;
+        }
+        fetch(`http://stackture.eloquenceprojects.org/chat/fetch/${workspace_id}/0`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }  
+        })
+            .then(async response => {
+                let data;
+                try {
+                    data = await response.json();
+                } catch (err) {
+                    console.log(err);
+                    toast.error("Failed to get chats");
+                    return;
+                }
+                if (!response.ok) {
+                    if (data.error === "TokenExpired") {
+                        toast.error("Token expired. Please log in.");
+                        logout();
+                        navigate("/");
+                        return;
+                    }
+                    throw new Error(data.error || `Error: ${response.status}`);
+                }
+                if (!data || data.length === 0) {
+                    setMessages([]);
+                    return;
+                }
+                setMessages(data.filter(msg => !(!msg.is_user && msg.message === "")));
+                const messages = document.querySelector(".chat-messages");
+                messages.scrollTop = messages.scrollHeight + 10;
+                console.log(data);
+            })
+            .catch(error => {
+                console.error("Failed to get chat state:", error);
+                toast.error("Failed to get chats. Try again later.");
+            })
+    }
+
+    onMount(() => {
+        document.title = "Stackture - Workspace";
+        if (user() === null) {
+            navigate("/");
+        }
+        window.addEventListener('keydown', handleKeyPress);
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
+        getWorkspaceState();
+        fetchMessages();
+        // makeDummyState();
+        connectWebSocket();
     });
 
     onCleanup(() => {
@@ -662,7 +723,7 @@ function Workspace() {
                 <div class="chat-messages">
                     <For each={messages}>
                         {(message, index) => (
-                            <div class={`message ${message.sender}`} innerHTML={message.text.split('\n').map(encodeHtml).join('<br>')} />
+                            <div class={`message ${message.is_user ? 'user' : 'ai'}`} innerHTML={message.message.split('\n').map(encodeHtml).join('<br>')} />
                         )}
                     </For>
                 </div>
@@ -671,7 +732,7 @@ function Workspace() {
                         onKeyDown={(e) => {
                             if (e.key === "Enter" && !e.shiftKey) {
                                 const messages = document.querySelector(".chat-messages");
-                                messages.scrollTop = messages.scrollHeight + 10;
+                                messages.scrollTop = messages.scrollHeight - 10;
                                 e.preventDefault();
                                 sendMessage();
                             }
